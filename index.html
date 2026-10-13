@@ -85,8 +85,6 @@ a { color: inherit; }
 .tab[aria-current="page"][data-cat="totes"] { background: var(--petroleo); color: #fff; }
 .tab[aria-current="page"][data-cat="encendedores"] { background: var(--coral); color: #fff; }
 .top .tabs.mas { -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); }
-.tab-diseno { flex: none; background: var(--coral); color: #fff; box-shadow: 2px 2px 0 var(--tinta); }
-.tab-diseno[aria-current="page"] { box-shadow: none; transform: translate(2px, 2px); }
 
 /* ---------- Franjas de marca ---------- */
 .franjas {
@@ -158,12 +156,7 @@ a { color: inherit; }
 .cat-head p { margin: 8px 0 0; position: relative; z-index: 1; max-width: 34ch; font-weight: 500; }
 .cat-head.remeras { background: var(--papel); }
 .cat-head.remeras h1 { color: var(--verde); }
-.cat-head.remeras .foto {
-  position: absolute; right: -6%; top: 0; bottom: 0; width: 52%;
-  background: url("banner-remeras.jpg") 50% 30% / cover;
-  border-left: 2px solid var(--tinta);
-}
-.cat-head.remeras .wrap { padding-right: 46%; }
+.cat-head.remeras .wrap { padding-right: 56px; }
 .cat-head.totes { background: var(--petroleo); }
 .cat-head.totes h1 { color: var(--papel); text-shadow: 2px 2px 0 var(--tinta); }
 .cat-head.totes p { color: var(--papel); }
@@ -335,7 +328,7 @@ a { color: inherit; }
 .cat-head.diseno h1 { color: var(--papel); }
 .cat-head.diseno p { color: var(--papel); }
 .cat-head.diseno .vertical { color: var(--tinta); }
-.generador { display: grid; gap: 22px; padding-block: 18px 150px; }
+.generador { display: grid; gap: 22px; padding-block: 4px 150px; }
 @media (min-width: 860px) {
   .generador { grid-template-columns: 1.1fr 1fr; gap: 36px; align-items: start; }
   .generador .estudio-col { position: sticky; top: 130px; }
@@ -558,7 +551,6 @@ a { color: inherit; }
 <header class="top">
   <div class="wrap">
     <a class="logo" href="#inicio" aria-label="Diseridú, inicio">DISERIDÚ</a>
-    <a class="tab tab-diseno" data-cat="tu-diseno" href="#tu-diseno">Tu diseño</a>
   </div>
   <nav class="wrap tabs" aria-label="Categorías">
     <a class="tab" data-cat="remeras" href="#remeras">Remeras</a>
@@ -656,7 +648,7 @@ a { color: inherit; }
    "nombre": "Fuego La única norma",
    "precio": null,
    "tag": "Memes",
-   "foto": "fuego-norma.jpg",
+   "foto": "fuego2-norma.jpg",
    "desc": "El collage de rayos de colores en tu bolsillo."
   },
   {
@@ -665,7 +657,7 @@ a { color: inherit; }
    "nombre": "Fuego Santo Mono Relojero",
    "precio": null,
    "tag": "Rock",
-   "foto": "fuego-mono.jpg",
+   "foto": "fuego2-mono.jpg",
    "desc": "La estampita del gaucho con el reloj de aureola, en encendedor negro."
   },
   {
@@ -674,7 +666,7 @@ a { color: inherit; }
    "nombre": "Fuego Afortunado 13",
    "precio": null,
    "tag": "Rock",
-   "foto": "fuego-afortunado.jpg",
+   "foto": "fuego2-afortunado.jpg",
    "desc": "La medalla del trébol con máscara, sobre encendedor negro."
   }
  ]
@@ -786,12 +778,12 @@ function vCategoria(cat) {
     </div>` : '';
   return `
   <section class="cat-head ${cat}">
-    ${cat === 'remeras' ? '<div class="foto" aria-hidden="true"></div>' : ''}
     <div class="wrap"><h1>${c.titulo}</h1><p>${c.bajada}</p></div>
     <span class="vertical">${c.vertical}</span>
   </section>
   <div class="wrap">
     <div class="toolbar"><span class="count">${lista.length} diseños</span>${filtro}</div>
+    ${cat === 'remeras' ? `<a class="cta-3d" href="#tu-diseno"><div><strong>ESTAMPÁ TU DISEÑO</strong><small>Subí tu imagen, ubicala en la remera y mirá cómo queda antes de pedirla.</small></div><img src="norma-negra.jpg" alt=""></a>` : ''}
     ${cat === 'encendedores' ? `<a class="cta-3d" href="#encendedor-3d"><div><strong>ARMÁ TU FUEGO EN 3D</strong><small>Elegí un diseño o subí el tuyo, giralo y mirá cómo queda antes de pedirlo.</small></div><img src="fuego-sol.jpg" alt=""></a>` : ''}
     <div class="grid">${lista.map(card).join('')}</div>
   </div>`;
@@ -875,7 +867,7 @@ function resumen() {
    ========================================================= */
 function render() {
   e3dSalir();
-  let e3d = false;
+  let conBarra = false;
   let h = decodeURIComponent(location.hash.slice(1));
   if (ES_EDITOR && !h) h = 'editar';
   if (ES_EDITOR) {
@@ -886,8 +878,8 @@ function render() {
   let cat = null;
   if (prod) { vista.innerHTML = vProducto(prod, pendingColor); cat = prod.cat; resumen(); }
   else if (CATS[h]) { vista.innerHTML = vCategoria(h); cat = h; }
-  else if (h === 'tu-diseno') { vista.innerHTML = vDiseno(); cat = h; genInit(); }
-  else if (h === 'encendedor-3d') { vista.innerHTML = vEncendedor3D(); cat = 'encendedores'; e3d = true; e3dIniciar(); }
+  else if (h === 'tu-diseno') { vista.innerHTML = vDiseno(); cat = 'remeras'; conBarra = true; genInit(); }
+  else if (h === 'encendedor-3d') { vista.innerHTML = vEncendedor3D(); cat = 'encendedores'; conBarra = true; e3dIniciar(); }
   else if (h === 'editar') { vista.innerHTML = vEditor(); cat = h; }
   else { vista.innerHTML = vInicio(); }
   pendingColor = null;
@@ -899,7 +891,7 @@ function render() {
   const activa = document.querySelector('.tabs .tab[aria-current]');
   if (activa) activa.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   tabsMas();
-  document.body.style.paddingBottom = (prod || e3d || cat === 'tu-diseno' || cat === 'editar') ? '118px' : '';
+  document.body.style.paddingBottom = (prod || conBarra || cat === 'editar') ? '118px' : '';
   $('#pie-ig').href = `https://www.instagram.com/${INSTAGRAM}/`;
   $('#pie-ig').textContent = '@' + INSTAGRAM;
   window.scrollTo(0, 0);
@@ -1005,6 +997,7 @@ function vDiseno() {
     <div class="wrap"><h1>TU DISEÑO</h1><p>Subí tu imagen, ubicala sobre la remera y consultanos para estamparla en vinilo textil.</p></div>
     <span class="vertical">Usá tu estilo</span>
   </section>
+  <div class="wrap"><a class="back" href="#remeras">← REMERAS</a></div>
   <div class="wrap generador" data-gen>
     <div class="estudio-col">
       <div class="estudio" id="estudio">
@@ -1415,7 +1408,7 @@ function edClick(t) {
       ? { id: '', cat, nombre: 'Remera nueva', precio: null, tag: 'Nuevo', fotos: { blanca: 'base-blanca.jpg', negra: 'base-negra.jpg' }, base: 'negra', desc: 'Descripción del diseño.', nuevo: true }
       : cat === 'totes'
         ? { id: '', cat, nombre: 'Tote nueva', precio: null, tag: 'Nuevo', foto: 'tote-lisa.jpg', desc: 'Descripción de la tote bag.', nuevo: true }
-      : { id: '', cat, nombre: 'Encendedor nuevo', precio: null, tag: 'Nuevo', foto: 'fuego-liso.jpg', desc: 'Descripción del encendedor.', nuevo: true };
+      : { id: '', cat, nombre: 'Encendedor nuevo', precio: null, tag: 'Nuevo', foto: 'fuego2-liso.jpg', desc: 'Descripción del encendedor.', nuevo: true };
     nuevo.id = idUnico(slug(nuevo.nombre), nuevo);
     const ultimo = PRODUCTOS.map(p => p.cat).lastIndexOf(cat);
     PRODUCTOS.splice(ultimo + 1, 0, nuevo);
