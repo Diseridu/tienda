@@ -622,6 +622,71 @@ a { color: inherit; }
 .e3d-col-btn { width: 34px; height: 34px; border-radius: 50%; background: var(--sw); border: 2px solid var(--papel); box-shadow: 0 0 0 1.5px var(--linea); padding: 0; }
 .e3d-col-btn[aria-pressed="true"] { box-shadow: 0 0 0 2.5px var(--tinta); }
 .e3d-colname { font-style: normal; color: var(--tinta-suave); margin-left: auto; letter-spacing: .06em; }
+
+/* ---------- Carrito ---------- */
+.carro-btn {
+  display: inline-flex; align-items: center; gap: 7px; flex: none;
+  border: 2px solid var(--tinta); border-radius: 999px; background: var(--papel);
+  padding: 7px 12px 6px; text-decoration: none;
+  font: 600 13px/1 var(--label); letter-spacing: .08em; text-transform: uppercase;
+}
+.carro-btn svg { width: 18px; height: 18px; }
+.carro-btn[aria-current="page"] { background: var(--tinta); color: var(--papel); }
+.carro-btn b {
+  min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
+  background: var(--coral); color: #fff; display: inline-grid; place-items: center;
+  font-size: 12px; letter-spacing: 0;
+}
+.carro-btn.pop b { animation: carroPop .45s ease; }
+@keyframes carroPop { 40% { transform: scale(1.45); } }
+.mini-add {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  border: 2px solid var(--tinta); border-radius: 999px; background: var(--tinta); color: var(--papel);
+  padding: 8px 6px 7px; text-decoration: none;
+  font: 600 12px/1 var(--label); letter-spacing: .08em; text-transform: uppercase;
+}
+.mini-add svg { width: 15px; height: 15px; flex: none; }
+.mini-add.talle-link { background: transparent; color: var(--tinta); }
+.acciones .btn { white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.acciones .btn svg { width: 16px; height: 16px; flex: none; }
+.talles.falta .talle { border-color: var(--coral); }
+.opt-label em.falta { color: var(--coral); }
+.cat-head.carrito { background: var(--violeta); }
+.cat-head.carrito h1 { color: var(--papel); text-shadow: 2px 2px 0 var(--tinta); }
+.cat-head.carrito p { color: var(--papel); }
+.cat-head.carrito .wrap { padding-right: 56px; }
+.cat-head.carrito .vertical { color: var(--verde); }
+.carro { display: grid; gap: 20px; padding-block: 18px 40px; }
+@media (min-width: 860px) { .carro { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; gap: 36px; } }
+.k-items { display: grid; gap: 12px; }
+.k-item { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; border: 2px solid var(--tinta); background: var(--papel); padding: 10px; }
+.k-item img { width: 76px; aspect-ratio: 1 / 1; object-fit: cover; border: 1.5px solid var(--tinta); background: var(--papel-2); }
+.k-item.sticker img { object-fit: contain; padding: 6%; }
+.k-item h3 { margin: 0; font: 600 15px/1.15 var(--label); letter-spacing: .04em; text-transform: uppercase; overflow-wrap: anywhere; }
+.k-item p { margin: 4px 0 0; font-size: 14px; line-height: 1.35; color: var(--tinta-suave); }
+.k-item p.k-archivo { color: var(--coral); font-weight: 600; }
+.k-fila { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 10px; }
+.k-fila .qty button { width: 36px; height: 34px; }
+.k-quitar { border: 0; background: none; padding: 4px 0; text-decoration: underline; font-size: 14px; color: var(--tinta-suave); }
+.k-lado { display: grid; gap: 14px; }
+.k-lado .ayuda { font-size: 14px; }
+.k-vacio { margin-block: 18px 40px; text-align: center; padding: 30px 14px; border: 2px dashed var(--tinta); display: grid; gap: 14px; justify-items: center; }
+.k-vacio strong { font: 400 34px/1 var(--display); }
+.k-vacio p { margin: 0; color: var(--tinta-suave); }
+.k-links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.k-links a { border: 2px solid var(--tinta); border-radius: 999px; padding: 8px 12px 7px; text-decoration: none; font: 600 12px/1 var(--label); letter-spacing: .1em; text-transform: uppercase; }
+.toast {
+  position: fixed; left: 50%; top: calc(12px + env(safe-area-inset-top, 0px)); z-index: 210;
+  transform: translate(-50%, -12px); opacity: 0; transition: opacity .2s ease, transform .2s ease;
+  width: max-content; max-width: calc(100% - 32px);
+  background: var(--tinta); color: var(--papel); border: 2px solid var(--tinta); border-radius: 14px;
+  padding: 11px 14px 10px; box-shadow: 3px 3px 0 var(--coral);
+  font: 600 14px/1.3 var(--label); letter-spacing: .04em;
+}
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.toast.error { background: var(--coral); color: #fff; box-shadow: 3px 3px 0 var(--tinta); }
+.toast a { color: var(--verde); margin-left: 6px; white-space: nowrap; }
+.toast.error a { color: #fff; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
 </head>
@@ -636,6 +701,7 @@ a { color: inherit; }
 <header class="top">
   <div class="wrap">
     <a class="logo" href="#inicio" aria-label="Diseridú, inicio">DISERIDÚ</a>
+    <a class="carro-btn" id="carro-btn" href="#carrito" aria-label="Ver carrito"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Carrito</span><b id="carro-n" hidden>0</b></a>
   </div>
   <nav class="wrap tabs" aria-label="Categorías">
     <a class="tab" data-cat="remeras" href="#remeras">Remeras</a>
@@ -663,6 +729,7 @@ a { color: inherit; }
   <div class="lb-colores" id="lb-colores"></div>
   <p class="lb-nota" id="lb-nota" hidden></p>
 </div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 
 
@@ -2444,6 +2511,7 @@ let sel = null; // selección en ficha
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const ICON_WPP = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2Z"/></svg>';
+const ICON_CARRO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>';
 function textoConsulta(p, o = {}) {
   const lineas = [`¡Hola Diseridú! Quiero consultar por ${{ remeras: 'la remera', totes: 'la tote bag', encendedores: 'el encendedor', stickers: 'el sticker' }[p.cat] || 'el producto'} "${p.nombre}".`];
   if (p.cat === 'remeras') {
@@ -2504,7 +2572,9 @@ function card(p) {
       <h3>${esc(p.nombre)}</h3>
     </a>
     <div class="meta"><span class="precio">${fmt(p.precio)}</span>${colores}</div>
-    <a class="mini-wpp" href="${linkWpp(textoConsulta(p, { color }))}" target="_blank" rel="noopener">${ICON_WPP}Consultar</a>
+    ${p.cat === 'remeras'
+      ? `<a class="mini-add talle-link" href="#${p.id}" data-pick-color="${color || ''}">Elegir talle →</a>`
+      : `<button type="button" class="mini-add" data-add="${p.id}">${ICON_CARRO}Agregar</button>`}
   </div>`;
 }
 
@@ -2583,7 +2653,10 @@ function vProducto(p, colorInicial) {
     <div class="wrap">
       ${codigoRow()}
       <div class="resumen" id="resumen"></div>
-      <a class="btn wpp" id="consultar" href="#" target="_blank" rel="noopener">${ICON_WPP}Consultar por WhatsApp</a>
+      <div class="acciones">
+        <a class="btn alt" id="consultar" href="#" target="_blank" rel="noopener">${ICON_WPP}Consultar</a>
+        <button class="btn" type="button" id="agregar">${ICON_CARRO}Agregar</button>
+      </div>
     </div>
   </div>`;
 }
@@ -2621,6 +2694,7 @@ function render() {
   else if (h === 'encendedor-3d') { vista.innerHTML = vEncendedor3D(); cat = 'encendedores'; conBarra = true; e3dIniciar(); }
   else if (h === 'regalo') { vista.innerHTML = vRegalo(); cat = 'regalo'; conBarra = true; regaloInit(); }
   else if (h === 'canjear') { vista.innerHTML = vCanjear(); cat = 'regalo'; canjeInit(); }
+  else if (h === 'carrito') { vista.innerHTML = vCarrito(); cat = 'carrito'; conBarra = CARRO.length > 0; carroPintar(); }
   else if (h === 'editar') { vista.innerHTML = vEditor(); cat = h; }
   else { vista.innerHTML = vInicio(); }
   bannerRegalo(!!CATS[h]);
@@ -2633,6 +2707,8 @@ function render() {
   const activa = document.querySelector('.tabs .tab[aria-current]');
   if (activa) activa.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   tabsMas();
+  if (h === 'carrito') $('#carro-btn').setAttribute('aria-current', 'page'); else $('#carro-btn').removeAttribute('aria-current');
+  carroBadge();
   document.body.style.paddingBottom = (prod || conBarra || cat === 'editar') ? '156px' : '';
   $('#pie-ig').href = `https://www.instagram.com/${INSTAGRAM}/`;
   $('#pie-ig').textContent = '@' + INSTAGRAM;
@@ -2684,6 +2760,7 @@ document.addEventListener('click', e => {
     sel.talle = t.dataset.talle;
     document.querySelectorAll('.talle').forEach(b => b.setAttribute('aria-pressed', b === t));
     $('#talle-txt').textContent = t.dataset.talle;
+    $('#talle-txt').classList.remove('falta'); $('.talles').classList.remove('falta');
     return resumen();
   }
   if (t.dataset.qty) {
@@ -2801,7 +2878,7 @@ function vDiseno() {
       <div class="resumen" id="gen-resumen"></div>
       <div class="acciones">
         <button class="btn alt" type="button" id="gen-descargar">Descargar</button>
-        <a class="btn wpp" id="gen-consultar" href="#" target="_blank" rel="noopener">${ICON_WPP}Consultar</a>
+        <button class="btn" type="button" id="gen-agregar">${ICON_CARRO}Agregar</button>
       </div>
     </div>
   </div>`;
@@ -2855,7 +2932,7 @@ function textoDiseno() {
 function genResumen() {
   const r = $('#gen-resumen'); if (!r) return;
   r.innerHTML = `Tu diseño<small>${[COLOR_TXT[gen.color], gen.talle ? 'Talle ' + gen.talle : 'Sin talle', gen.cant + (gen.cant === 1 ? ' unidad' : ' unidades')].join(' · ')}</small>`;
-  $('#gen-consultar').href = linkWpp(textoDiseno());
+  const gc = $('#gen-consultar'); if (gc) gc.href = linkWpp(textoDiseno());
 }
 
 function genCargar(file) {
@@ -3422,7 +3499,7 @@ function vEncendedor3D() {
       <div class="resumen" id="e3d-resumen"></div>
       <div class="acciones">
         <button class="btn alt" type="button" id="e3d-descargar">Descargar</button>
-        <a class="btn wpp" id="e3d-consultar" href="#" target="_blank" rel="noopener">${ICON_WPP}Consultar</a>
+        <button class="btn" type="button" id="e3d-agregar">${ICON_CARRO}Agregar</button>
       </div>
     </div>
   </div>`;
@@ -3454,7 +3531,7 @@ function e3dTexto() {
 function e3dResumen() {
   const E = e3dEstado, r = $('#e3d-resumen'); if (!r) return;
   r.innerHTML = `Tu fuego 3D<small>${[E3D_COLORES[E.color][0], E.mode === 'wrap' ? 'Envolvente' : (e3dConDorso() ? 'Frente y dorso' : 'Al frente'), E.cant + (E.cant === 1 ? ' unidad' : ' unidades')].join(' · ')}</small>`;
-  $('#e3d-consultar').href = linkWpp(e3dTexto());
+  const ec = $('#e3d-consultar'); if (ec) ec.href = linkWpp(e3dTexto());
 }
 
 function e3dSalir() {
@@ -4486,6 +4563,7 @@ function codigoRepintar(foco) {
   if ($('#resumen') && sel) resumen();
   if ($('#gen-resumen')) genResumen();
   if ($('#e3d-resumen')) e3dResumen();
+  if ($('#k-resumen')) carroPintar();
   if (foco && $('#cod-input')) $('#cod-input').focus();
 }
 function codigoAplicar() {
@@ -4510,6 +4588,187 @@ function conRegalo(t, alFinal) {
   const i = t.lastIndexOf('\n\n');
   return alFinal || i < 0 ? t.replace(/\n\n([^\n]*)$/, `\n${linea}\n\n$1`) : t.slice(0, i) + '\n' + linea + t.slice(i);
 }
+
+
+/* =========================================================
+   Carrito: junta productos y arma un solo pedido por WhatsApp.
+   Se guarda en el navegador de cada cliente (no en el repo).
+   ========================================================= */
+const CARRO_KEY = 'diseridu-carrito';
+const TIPO = { remeras: 'Remera', totes: 'Tote bag', encendedores: 'Encendedor', stickers: 'Sticker' };
+let CARRO = [], CARRO_NOTA = '';
+try {
+  const g = JSON.parse(localStorage.getItem(CARRO_KEY) || 'null');
+  if (g && Array.isArray(g.items)) { CARRO = g.items; CARRO_NOTA = g.nota || ''; }
+} catch (e) {}
+CARRO = CARRO.filter(it => it && it.cant > 0 && (it.custom ? it.titulo : PRODUCTOS.some(p => p.id === it.id)));
+
+function carroGuardar() {
+  try { localStorage.setItem(CARRO_KEY, JSON.stringify({ items: CARRO, nota: CARRO_NOTA })); } catch (e) {}
+  carroBadge();
+}
+const carroUnidades = () => CARRO.reduce((n, it) => n + it.cant, 0);
+function carroBadge(pop) {
+  const b = $('#carro-n'); if (!b) return;
+  const n = carroUnidades();
+  b.textContent = n; b.hidden = !n;
+  if (pop) { const btn = $('#carro-btn'); btn.classList.remove('pop'); void btn.offsetWidth; btn.classList.add('pop'); }
+}
+function carroAgregar(item, nombre) {
+  const key = item.custom ? 'c-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) : [item.id, item.color || '', item.talle || ''].join('|');
+  const ya = CARRO.find(x => x.key === key);
+  if (ya) ya.cant = Math.min(99, ya.cant + item.cant); else CARRO.push({ ...item, key });
+  carroGuardar(); carroBadge(true);
+  toast(nombre, false, true);
+}
+function carroInfo(it) {
+  if (it.custom) return { titulo: it.titulo, detalle: it.detalle, foto: it.foto, sticker: false };
+  const p = PRODUCTOS.find(x => x.id === it.id);
+  const det = [TIPO[p.cat]];
+  if (p.cat === 'remeras') det.push(COLOR_TXT[it.color], 'Talle ' + it.talle);
+  return { titulo: p.nombre, detalle: det.join(' · '), foto: fotoDe(p, it.color), sticker: p.cat === 'stickers', p };
+}
+function textoCarrito() {
+  const l = ['¡Hola Diseridú! Quiero hacer este pedido:', ''];
+  CARRO.forEach((it, i) => {
+    let linea;
+    if (it.custom) linea = `${it.titulo}${it.detalle ? ' (' + it.detalle + ')' : ''}`;
+    else {
+      const p = PRODUCTOS.find(x => x.id === it.id);
+      linea = `${TIPO[p.cat]} "${p.nombre}"${p.cat === 'remeras' ? ` (${COLOR_TXT[it.color]}, talle ${it.talle})` : ''}`;
+    }
+    l.push(`${i + 1}. ${linea} × ${it.cant}`);
+  });
+  l.push(`Total: ${carroUnidades()} ${carroUnidades() === 1 ? 'unidad' : 'unidades'}`);
+  if (CARRO_NOTA.trim()) l.push('', `Comentarios: ${CARRO_NOTA.trim()}`);
+  if (CARRO.some(it => it.archivo)) l.push('', 'Les paso por acá los mockups y archivos de los diseños propios.');
+  l.push('', '¿Me pasan el total y cómo coordinamos el envío?');
+  return conRegalo(l.join('\n'), true);
+}
+
+function vCarrito() {
+  const head = `
+  <section class="cat-head carrito">
+    <div class="wrap"><h1>CARRITO</h1><p>Revisá tu pedido y mandalo en un solo mensaje. Por WhatsApp te pasamos el total y coordinamos el envío.</p></div>
+    <span class="vertical">Tu pedido</span>
+  </section>`;
+  if (!CARRO.length) return head + `
+  <div class="wrap"><div class="k-vacio">
+    <strong>TODAVÍA ESTÁ VACÍO</strong>
+    <p>Sumá remeras, totes, encendedores o stickers y mandá todo junto.</p>
+    <div class="k-links"><a href="#remeras">Remeras</a><a href="#totes">Tote bags</a><a href="#encendedores">Encendedores</a><a href="#stickers">Stickers</a></div>
+  </div></div>`;
+  return head + `
+  <div class="wrap carro">
+    <div class="k-items" id="k-items"></div>
+    <div class="k-lado">
+      <label class="r-campo"><span>Comentarios (opcional)</span>
+        <textarea id="k-nota" maxlength="400" placeholder="Zona para el envío, si preferís retirar, horarios…">${esc(CARRO_NOTA)}</textarea>
+      </label>
+      <p class="ayuda">Al tocar "Enviar pedido" se abre WhatsApp con todo el detalle. El carrito queda guardado en este celu hasta que lo vacíes.</p>
+    </div>
+  </div>
+  <div class="buybar">
+    <div class="wrap">
+      ${codigoRow()}
+      <div class="resumen" id="k-resumen"></div>
+      <div class="acciones">
+        <button class="btn alt" type="button" data-k-vaciar>Vaciar</button>
+        <a class="btn wpp" id="k-enviar" href="#" target="_blank" rel="noopener">${ICON_WPP}Enviar pedido</a>
+      </div>
+    </div>
+  </div>`;
+}
+function carroPintar() {
+  const box = $('#k-items'); if (!box) return;
+  box.innerHTML = CARRO.map(it => {
+    const d = carroInfo(it);
+    const enlace = it.custom ? '' : ` href="#${it.id}"`;
+    return `<div class="k-item${d.sticker ? ' sticker' : ''}">
+      <a${enlace} tabindex="-1" aria-hidden="true"><img src="${d.foto}" alt=""></a>
+      <div>
+        <h3>${esc(d.titulo)}</h3>
+        <p>${esc(d.detalle)}</p>
+        ${it.archivo ? '<p class="k-archivo">Mandanos el archivo por WhatsApp</p>' : ''}
+        <div class="k-fila">
+          <div class="qty"><button type="button" data-kq="${it.key}" data-d="-1" aria-label="Menos">−</button><output>${it.cant}</output><button type="button" data-kq="${it.key}" data-d="1" aria-label="Más">+</button></div>
+          <button type="button" class="k-quitar" data-kx="${it.key}">Quitar</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  const n = carroUnidades();
+  $('#k-resumen').innerHTML = `Tu pedido<small>${CARRO.length} ${CARRO.length === 1 ? 'producto' : 'productos'} · ${n} ${n === 1 ? 'unidad' : 'unidades'}</small>`;
+  $('#k-enviar').href = linkWpp(textoCarrito());
+}
+
+let toastT = null;
+function toast(msg, error, verCarrito) {
+  const el = $('#toast');
+  el.innerHTML = esc(msg) + (verCarrito && location.hash !== '#carrito' ? '<a href="#carrito">Ver carrito →</a>' : '');
+  el.classList.toggle('error', !!error);
+  el.hidden = false;
+  requestAnimationFrame(() => el.classList.add('on'));
+  clearTimeout(toastT);
+  toastT = setTimeout(() => { el.classList.remove('on'); setTimeout(() => { el.hidden = true; }, 220); }, 2800);
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('button, a');
+  if (!t) return;
+  if (t.dataset.pickColor !== undefined) { pendingColor = t.dataset.pickColor || null; return; }
+  if (t.dataset.add) {
+    const p = PRODUCTOS.find(x => x.id === t.dataset.add);
+    return carroAgregar({ id: p.id, cant: 1 }, `"${p.nombre}" está en el carrito`);
+  }
+  if (t.id === 'agregar') {
+    const p = PRODUCTOS.find(x => x.id === sel.id);
+    if (p.cat === 'remeras' && !sel.talle) {
+      $('.talles').classList.add('falta');
+      $('#talle-txt').textContent = 'Elegí uno'; $('#talle-txt').classList.add('falta');
+      $('.talles').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return toast('Elegí un talle antes de agregar', true);
+    }
+    return carroAgregar({ id: p.id, color: sel.color, talle: sel.talle, cant: sel.cant }, `"${p.nombre}" está en el carrito`);
+  }
+  if (t.id === 'gen-agregar') {
+    if (!gen.src) return toast('Primero subí tu diseño', true);
+    if (!gen.talle) return toast('Elegí un talle antes de agregar', true);
+    const m = genMedidas();
+    return carroAgregar({
+      custom: 'remera', titulo: 'Remera con diseño propio', archivo: true, foto: BASES[gen.color], cant: gen.cant,
+      detalle: [COLOR_TXT[gen.color], 'talle ' + gen.talle, m ? `≈ ${Math.round(m.fw * ANCHO_FOTO_CM)} × ${Math.round(m.fh * ANCHO_FOTO_CM)} cm` : ''].filter(Boolean).join(', ')
+    }, 'Tu remera está en el carrito');
+  }
+  if (t.id === 'e3d-agregar') {
+    const E = e3dEstado;
+    const det = e3dTexto().split('\n').filter(x => x.startsWith('• ') && !/^• (Cantidad|Tarjeta)/.test(x)).map(x => x.slice(2).replace(' (se los paso por acá)', ''));
+    const dis = !E.propio && E3D_DISENOS.find(d => d.id === E.diseno);
+    return carroAgregar({
+      custom: 'encendedor', titulo: 'Encendedor con diseño', detalle: det.join('; '), cant: E.cant,
+      archivo: !!(E.propio || E.dorso === 'propio'), foto: dis ? dis.src : 'cat-encendedores.jpg'
+    }, 'Tu fuego está en el carrito');
+  }
+  if (t.dataset.kq) {
+    const it = CARRO.find(x => x.key === t.dataset.kq);
+    it.cant = Math.max(1, Math.min(99, it.cant + Number(t.dataset.d)));
+    carroGuardar(); return carroPintar();
+  }
+  if (t.dataset.kx) {
+    CARRO = CARRO.filter(x => x.key !== t.dataset.kx);
+    carroGuardar();
+    return CARRO.length ? carroPintar() : render();
+  }
+  if (t.hasAttribute('data-k-vaciar')) {
+    if (!confirm('¿Vaciar el carrito?')) return;
+    CARRO = []; carroGuardar(); return render();
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.id !== 'k-nota') return;
+  CARRO_NOTA = e.target.value; carroGuardar();
+  $('#k-enviar').href = linkWpp(textoCarrito());
+});
 
 /* WhatsApp */
 function linkWpp(txt) { return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(txt)}`; }
