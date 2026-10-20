@@ -414,6 +414,65 @@ a { color: inherit; }
 .cta-diseno strong { display: block; font: 400 30px/1 var(--display); margin-bottom: 6px; }
 .cta-diseno small { font: 500 15px/1.35 var(--texto); }
 .lb-nota { margin: 0; padding: 10px var(--gutter) 0; text-align: center; color: #fff; font-size: 14px; }
+/* ---------- Tarjeta de regalo ---------- */
+.cat-head.regalo { background: var(--rosa); }
+.cat-head.regalo h1 { color: var(--papel); text-shadow: 2px 2px 0 var(--tinta); font-size: clamp(48px, 13.5vw, 130px); line-height: .92; }
+.cat-head.regalo p { color: var(--papel); }
+.cat-head.regalo .wrap { padding-right: 56px; }
+.cat-head.regalo .vertical { color: var(--tinta); }
+.cta-regalo {
+  display: grid; grid-template-columns: 1fr 140px; gap: 14px; align-items: center;
+  margin-top: 12px; text-decoration: none;
+  background: var(--rosa); color: #fff; border: 2px solid var(--tinta); padding: 10px 10px 10px 14px;
+}
+.cta-regalo img { width: 140px; aspect-ratio: 3 / 2; object-fit: cover; border: 2px solid var(--papel); }
+.cta-regalo strong { display: block; font: 400 30px/1 var(--display); margin-bottom: 6px; }
+.cta-regalo small { font: 500 15px/1.35 var(--texto); }
+.regalo { display: grid; gap: 26px; padding-block: 18px 24px; }
+@media (min-width: 860px) {
+  .regalo { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); align-items: start; }
+  .regalo .r-vista { position: sticky; top: 130px; }
+}
+.r-vista { display: grid; gap: 10px; }
+.r-vista canvas { width: 100%; height: auto; display: block; border: 2px solid var(--tinta); box-shadow: 4px 4px 0 var(--tinta); background: var(--papel-2); }
+.r-vista .ayuda, .r-nota { margin: 0; font-size: 14px; color: var(--tinta-suave); }
+.r-form { display: grid; gap: 22px; }
+.r-bloque { display: grid; gap: 10px; }
+.r-bloque h2 { margin: 0; font: 600 13px/1 var(--label); letter-spacing: .14em; text-transform: uppercase; }
+.r-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.r-campo { display: grid; gap: 6px; min-width: 0; }
+.r-campo.ancho { grid-column: 1 / -1; }
+.r-campo span { font: 600 12px/1 var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-suave); }
+.r-campo input, .r-campo textarea, .canje input {
+  width: 100%; border: 2px solid var(--tinta); border-radius: 10px; background: #fff; color: var(--tinta);
+  padding: 11px 12px; font: 400 16px/1.35 var(--texto);
+}
+.r-campo textarea { min-height: 76px; resize: vertical; }
+.r-items { display: grid; gap: 10px; }
+.r-item {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center;
+  border: 2px solid var(--linea); border-radius: 12px; padding: 12px; background: var(--papel);
+}
+.r-item.on { border-color: var(--tinta); background: var(--papel-2); box-shadow: 3px 3px 0 var(--tinta); }
+.r-item strong { display: block; font: 600 16px/1.1 var(--label); letter-spacing: .08em; text-transform: uppercase; }
+.r-item small { display: block; margin-top: 4px; font-size: 14px; line-height: 1.35; color: var(--tinta-suave); }
+.r-item .qty { justify-self: end; background: var(--papel); }
+.r-msg { margin: 0; font-weight: 600; font-size: 15px; color: var(--coral); }
+.r-msg:empty { display: none; }
+.r-codigo { font: 600 13px/1 var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-suave); }
+.r-codigo b { color: var(--tinta); }
+.r-otra { justify-self: start; border: 0; background: none; padding: 0; text-decoration: underline; font-size: 14px; color: var(--tinta-suave); }
+/* Canje */
+.canje { display: grid; gap: 14px; padding-block: 22px 40px; max-width: 520px; }
+.canje p { margin: 0; }
+.canje input { font: 400 30px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-align: center; padding: 14px 12px 10px; }
+.canje .btn { justify-self: stretch; }
+.canje-ok { display: grid; gap: 10px; border: 2px solid var(--tinta); background: var(--verde); padding: 16px; box-shadow: 4px 4px 0 var(--tinta); }
+.canje-ok strong { font: 400 30px/1 var(--display); }
+.canje-ok .btn { display: block; }
+.canje-banner { background: var(--verde); border-bottom: 2px solid var(--tinta); }
+.canje-banner .wrap { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-block: 8px; font: 600 13px/1.2 var(--label); letter-spacing: .08em; text-transform: uppercase; }
+.canje-banner button { border: 2px solid var(--tinta); background: var(--papel); border-radius: 999px; padding: 5px 10px 4px; font: 600 12px/1 var(--label); letter-spacing: .1em; text-transform: uppercase; flex: none; }
 /* ---------- Editor ---------- */
 .modo { background: var(--tinta); color: var(--papel); }
 .modo .wrap { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-block: 8px; }
@@ -567,9 +626,11 @@ a { color: inherit; }
     <a class="tab" data-cat="remeras" href="#remeras">Remeras</a>
     <a class="tab" data-cat="totes" href="#totes">Tote bags</a>
     <a class="tab" data-cat="encendedores" href="#encendedores">Encendedores</a>
+    <a class="tab" data-cat="regalo" href="#regalo">Regalá</a>
   </nav>
 </header>
 
+<div class="canje-banner" id="canje-banner" hidden><div class="wrap"><span>Canjeando tarjeta <b id="canje-banner-cod"></b></span><button type="button" id="canje-banner-x">Quitar</button></div></div>
 <main id="vista"></main>
 
 <footer class="pie">
@@ -817,7 +878,7 @@ function textoConsulta(p, o = {}) {
   }
   lineas.push(`• Cantidad: ${o.cant || 1}`);
   lineas.push('', '¿Me pasan precio y cómo coordinamos el envío?');
-  return lineas.join('\n');
+  return conRegalo(lineas.join('\n'));
 }
 const fotoDe = (p, color) => p.cat === 'remeras' ? p.fotos[color || p.base] : p.foto;
 
@@ -843,6 +904,10 @@ function vInicio() {
     <a class="cta-diseno" href="#tu-diseno">
       <div><strong>ESTAMPÁ TU DISEÑO</strong><small>Subí tu imagen, ubicala en la remera y mirá cómo queda antes de pedirla.</small></div>
       <img src="base-negra.jpg" alt="">
+    </a>
+    <a class="cta-regalo" href="#regalo">
+      <div><strong>TARJETA DE REGALO</strong><small>Elegí cuántas remeras y qué extras incluye, descargá la tarjeta y la regalás.</small></div>
+      <img src="tarjeta-regalo.jpg" alt="">
     </a>
     <a class="cta-wpp" href="${linkWpp('¡Hola! Quiero ver el catálogo completo de Diseridú.')}" target="_blank" rel="noopener">
       <img src="catalogo.jpg" alt="">
@@ -978,8 +1043,11 @@ function render() {
   else if (CATS[h]) { vista.innerHTML = vCategoria(h); cat = h; }
   else if (h === 'tu-diseno') { vista.innerHTML = vDiseno(); cat = 'remeras'; conBarra = true; genInit(); }
   else if (h === 'encendedor-3d') { vista.innerHTML = vEncendedor3D(); cat = 'encendedores'; conBarra = true; e3dIniciar(); }
+  else if (h === 'regalo') { vista.innerHTML = vRegalo(); cat = 'regalo'; conBarra = true; regaloInit(); }
+  else if (h === 'canjear') { vista.innerHTML = vCanjear(); cat = 'regalo'; canjeInit(); }
   else if (h === 'editar') { vista.innerHTML = vEditor(); cat = h; }
   else { vista.innerHTML = vInicio(); }
+  bannerRegalo(!!prod || h === 'tu-diseno' || h === 'encendedor-3d' || CATS[h]);
   pendingColor = null;
   if (!$('#lightbox').hidden) cerrarLightbox();
   document.querySelectorAll('.tab').forEach(t => {
@@ -1196,7 +1264,7 @@ function genPintar() {
 
 function textoDiseno() {
   const m = genMedidas();
-  return [
+  return conRegalo([
     '¡Hola Diseridú! Quiero estampar un diseño propio.',
     `• Remera: ${COLOR_TXT[gen.color]}`,
     `• Talle: ${gen.talle || 'a definir'}`,
@@ -1204,7 +1272,7 @@ function textoDiseno() {
     `• Tamaño aprox.: ${m ? Math.round(m.fw * ANCHO_FOTO_CM) + ' × ' + Math.round(m.fh * ANCHO_FOTO_CM) + ' cm' : 'a definir'}`,
     '',
     'Les paso por acá el mockup y el archivo del diseño.'
-  ].join('\n');
+  ].join('\n'), true);
 }
 
 function genResumen() {
@@ -1377,7 +1445,7 @@ const slug = t => String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u03
   .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'producto';
 function idUnico(base, propio) {
   let id = base, n = 2;
-  while (PRODUCTOS.some(p => p.id === id && p !== propio) || ['inicio', 'remeras', 'stickers', 'totes', 'encendedores', 'encendedor-3d', 'tu-diseno', 'editar'].includes(id)) id = `${base}-${n++}`;
+  while (PRODUCTOS.some(p => p.id === id && p !== propio) || ['inicio', 'remeras', 'stickers', 'totes', 'encendedores', 'encendedor-3d', 'tu-diseno', 'editar', 'regalo', 'canjear'].includes(id)) id = `${base}-${n++}`;
   return id;
 }
 
@@ -1791,7 +1859,7 @@ function e3dTexto() {
   const E = e3dEstado;
   const dis = E.propio ? 'mi propio diseño (se los paso por acá)' : '"' + E3D_DISENOS.find(d => d.id === E.diseno).nombre + '"';
   const dorso = !e3dConDorso() ? null : E.doble ? 'mitad derecha de la misma imagen' + (E.medidasDorso ? ', ' + E.medidasDorso : '') : (E.dorso === 'propio' ? 'mi propio diseño (se los paso por acá)' : '"' + E3D_DISENOS.find(d => d.id === E.dorso).nombre + '"') + (E.medidasDorso ? ', ' + E.medidasDorso : '');
-  return [
+  return conRegalo([
     '¡Hola Diseridú! Quiero un encendedor con diseño.',
     `• ${dorso ? 'Frente' : 'Diseño'}: ${E.doble ? 'mitad izquierda de ' + dis : dis}`,
     ...(dorso ? [`• Dorso: ${dorso}`] : []),
@@ -1800,7 +1868,7 @@ function e3dTexto() {
     `• Cantidad: ${E.cant}`,
     '',
     '¿Me pasan precio y cómo coordinamos el envío?'
-  ].join('\n');
+  ].join('\n'));
 }
 function e3dResumen() {
   const E = e3dEstado, r = $('#e3d-resumen'); if (!r) return;
@@ -2453,6 +2521,377 @@ function e3dMontar(stage) {
     try { renderer.forceContextLoss(); } catch (e) {}
     if (urlPropia) URL.revokeObjectURL(urlPropia);
   };
+}
+
+/* =========================================================
+   Tarjeta de regalo (#regalo) y canje (#canjear)
+   El código lleva un dígito de control: detecta errores de tipeo,
+   pero la validez real (si se pagó) la chequean ustedes por WhatsApp.
+   ========================================================= */
+const ALF_COD = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'; // sin 0, 1, I, O
+function digitoCod(cuerpo) {
+  let s = 0;
+  for (let i = 0; i < cuerpo.length; i++) s += (i + 1) * (ALF_COD.indexOf(cuerpo[i]) + 7);
+  return ALF_COD[s % ALF_COD.length];
+}
+function nuevoCodigo() {
+  const r = new Uint8Array(4);
+  (window.crypto || window.msCrypto).getRandomValues(r);
+  const cuerpo = Array.from(r, n => ALF_COD[n % ALF_COD.length]).join('');
+  return 'DSR-' + cuerpo + digitoCod(cuerpo);
+}
+function validarCodigo(txt) {
+  let s = String(txt || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (s.startsWith('DSR')) s = s.slice(3);
+  if (s.length !== 5 || [...s].some(c => !ALF_COD.includes(c))) return null;
+  return digitoCod(s.slice(0, 4)) === s[4] ? 'DSR-' + s : null;
+}
+
+// código que se está canjeando en esta visita (se suma a los pedidos por WhatsApp)
+let REGALO = null;
+try { REGALO = sessionStorage.getItem('diseridu-regalo') || null; } catch (e) {}
+function setRegalo(c) {
+  REGALO = c;
+  try { c ? sessionStorage.setItem('diseridu-regalo', c) : sessionStorage.removeItem('diseridu-regalo'); } catch (e) {}
+}
+function bannerRegalo(mostrar) {
+  const b = $('#canje-banner');
+  if (!b) return;
+  b.hidden = !(REGALO && mostrar);
+  if (REGALO) $('#canje-banner-cod').textContent = REGALO;
+}
+
+const ITEMS_REG = [
+  { k: 'remeras', uno: 'remera', varios: 'remeras', det: 'Personalizable, frente y dorso. Quien la recibe elige diseño, color y talle.', tarjeta: 'Personalizable · frente y dorso', color: '#F15A3D' },
+  { k: 'encendedores', uno: 'encendedor', varios: 'encendedores', det: 'Con el diseño que elija.', tarjeta: 'Con el diseño que elijas', color: '#1D879A' },
+  { k: 'stickers', uno: 'sticker', varios: 'stickers', det: 'Waterproof, para la compu, el termo o donde quiera.', tarjeta: 'Waterproof', color: '#8A6B9E' },
+  { k: 'totes', uno: 'tote bag', varios: 'tote bags', det: 'Negra, estampada con el diseño que elija.', tarjeta: 'Estampada a elección', color: '#DF628A' }
+];
+const REG = { para: '', de: '', msg: '', items: { remeras: 1, encendedores: 0, stickers: 0, totes: 0 }, codigo: null };
+const nItem = (it, n) => `${n} ${n === 1 ? it.uno : it.varios}`;
+const itemsElegidos = () => ITEMS_REG.filter(it => REG.items[it.k] > 0);
+
+function vRegalo() {
+  if (!REG.codigo) REG.codigo = nuevoCodigo();
+  return `
+  <section class="cat-head regalo">
+    <div class="wrap"><h1>TARJETA DE REGALO</h1><p>Armá la tarjeta, descargala y escribinos: el precio y el alias te los pasamos por WhatsApp.</p></div>
+    <span class="vertical">Regalá estilo</span>
+  </section>
+  <div class="wrap"><a class="back" href="#canjear">¿Te regalaron una? Canjeala →</a></div>
+  <div class="wrap regalo">
+    <div class="r-vista">
+      <canvas id="r-canvas" width="1500" height="1000" aria-label="Vista previa de la tarjeta de regalo"></canvas>
+      <p class="r-codigo">Código de esta tarjeta: <b id="r-cod">${REG.codigo}</b></p>
+      <p class="ayuda">Así se va a ver la tarjeta que descargás. Se actualiza mientras completás los datos.</p>
+    </div>
+    <div class="r-form">
+      <div class="r-bloque">
+        <h2>¿Para quién es?</h2>
+        <div class="r-campos">
+          <label class="r-campo"><span>Para</span><input type="text" id="r-para" maxlength="28" autocomplete="off" value="${esc(REG.para)}" placeholder="Nombre"></label>
+          <label class="r-campo"><span>De</span><input type="text" id="r-de" maxlength="28" autocomplete="name" value="${esc(REG.de)}" placeholder="Tu nombre"></label>
+          <label class="r-campo ancho"><span>Mensaje (opcional)</span><textarea id="r-msg" maxlength="140" placeholder="Feliz cumple, que lo disfrutes…">${esc(REG.msg)}</textarea></label>
+        </div>
+      </div>
+      <div class="r-bloque">
+        <h2>¿Qué incluye?</h2>
+        <div class="r-items">
+          ${ITEMS_REG.map(it => `
+          <div class="r-item ${REG.items[it.k] > 0 ? 'on' : ''}" data-ritem="${it.k}">
+            <div><strong>${it.varios}</strong><small>${it.det}</small></div>
+            <div class="qty"><button type="button" data-rq="-1" data-rk="${it.k}" aria-label="Menos ${it.varios}">−</button><output id="rq-${it.k}">${REG.items[it.k]}</output><button type="button" data-rq="1" data-rk="${it.k}" aria-label="Más ${it.varios}">+</button></div>
+          </div>`).join('')}
+        </div>
+      </div>
+      <p class="r-msg" id="r-aviso" aria-live="polite"></p>
+      <p class="r-nota">Al tocar "Pedir" se descarga la tarjeta y se abre WhatsApp con el pedido y el código. Ahí te pasamos el precio y el alias para pagar; la tarjeta queda activa cuando confirmamos el pago.</p>
+      <button type="button" class="r-otra" id="r-otra">Armar otra tarjeta (código nuevo)</button>
+    </div>
+  </div>
+  <div class="buybar">
+    <div class="wrap">
+      <div class="resumen" id="r-resumen"></div>
+      <div class="acciones">
+        <button class="btn alt" type="button" id="r-descargar">Descargar</button>
+        <a class="btn wpp" id="r-pedir" href="#" target="_blank" rel="noopener">${ICON_WPP}Pedir</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+function textoRegalo() {
+  const l = [
+    '¡Hola Diseridú! Quiero comprar una tarjeta de regalo.',
+    `• Código: ${REG.codigo}`,
+    `• Para: ${REG.para.trim()}`,
+    `• De: ${REG.de.trim() || 'a definir'}`,
+    `• Incluye: ${itemsElegidos().map(it => nItem(it, REG.items[it.k]) + (it.k === 'remeras' ? ' personalizable' + (REG.items[it.k] === 1 ? '' : 's') + ' (frente y dorso)' : '')).join(', ')}`
+  ];
+  if (REG.msg.trim()) l.push(`• Mensaje: "${REG.msg.trim()}"`);
+  l.push('', 'Ya descargué la tarjeta digital. ¿Me pasan el precio y el alias para pagar?');
+  return l.join('\n');
+}
+
+function regaloResumen() {
+  const el = itemsElegidos();
+  $('#r-resumen').innerHTML = `Tarjeta de regalo<small>${el.length ? el.map(it => nItem(it, REG.items[it.k])).join(' + ') : 'Elegí qué incluye'}</small>`;
+  $('#r-pedir').href = linkWpp(textoRegalo());
+}
+
+function regaloError() {
+  if (!REG.para.trim()) return 'Poné para quién es la tarjeta.';
+  if (!itemsElegidos().length) return 'Sumá al menos una cosa a la tarjeta.';
+  return '';
+}
+
+let rPintarPend = false;
+function regaloPintar() {
+  if (rPintarPend) return;
+  rPintarPend = true;
+  requestAnimationFrame(() => { rPintarPend = false; const cv = $('#r-canvas'); if (cv) dibujarTarjeta(cv, REG); });
+}
+
+function descargarTarjeta() {
+  const cv = $('#r-canvas');
+  dibujarTarjeta(cv, REG);
+  const a = document.createElement('a');
+  a.href = cv.toDataURL('image/jpeg', 0.92);
+  a.download = `tarjeta-regalo-diseridu-${REG.codigo}.jpg`;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+function regaloInit() {
+  const aviso = $('#r-aviso');
+  [['r-para', 'para'], ['r-de', 'de'], ['r-msg', 'msg']].forEach(([id, k]) =>
+    $('#' + id).addEventListener('input', e => { REG[k] = e.target.value; aviso.textContent = ''; regaloResumen(); regaloPintar(); }));
+  vista.querySelector('.r-items').addEventListener('click', e => {
+    const b = e.target.closest('[data-rq]'); if (!b) return;
+    const k = b.dataset.rk;
+    REG.items[k] = Math.max(0, Math.min(20, REG.items[k] + Number(b.dataset.rq)));
+    $('#rq-' + k).textContent = REG.items[k];
+    vista.querySelector(`[data-ritem="${k}"]`).classList.toggle('on', REG.items[k] > 0);
+    aviso.textContent = ''; regaloResumen(); regaloPintar();
+  });
+  const frenar = e => {
+    const err = regaloError();
+    if (!err) return false;
+    e.preventDefault(); aviso.textContent = err;
+    aviso.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    return true;
+  };
+  $('#r-descargar').addEventListener('click', e => { if (!frenar(e)) descargarTarjeta(); });
+  // descarga la tarjeta y deja que el link abra WhatsApp en la misma acción
+  $('#r-pedir').addEventListener('click', e => { if (!frenar(e)) descargarTarjeta(); });
+  $('#r-otra').addEventListener('click', () => {
+    Object.assign(REG, { para: '', de: '', msg: '', codigo: nuevoCodigo(), items: { remeras: 1, encendedores: 0, stickers: 0, totes: 0 } });
+    vista.innerHTML = vRegalo(); regaloInit(); window.scrollTo(0, 0);
+  });
+  regaloResumen();
+  dibujarTarjeta($('#r-canvas'), REG);
+  // repinta cuando terminan de cargar las tipografías de la marca
+  if (document.fonts && document.fonts.load) {
+    Promise.all([
+      document.fonts.load('400 100px Anton', 'DISERIDÚ'),
+      document.fonts.load('600 30px Oswald', 'TARJETA'),
+      document.fonts.load('500 24px Archivo', 'Mensaje')
+    ]).then(regaloPintar, regaloPintar);
+  }
+}
+
+/* ---------- Dibujo de la tarjeta (1500 × 1000) ---------- */
+function rng(seedTxt) {
+  let h = 2166136261;
+  for (const c of seedTxt) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+  return () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 100000) / 100000; };
+}
+let granoCache = null;
+function grano() {
+  if (granoCache) return granoCache;
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const x = c.getContext('2d'), d = x.createImageData(256, 256), r = rng('grano');
+  for (let i = 0; i < d.data.length; i += 4) { const v = 60 + r() * 60; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = r() < .5 ? 0 : 22 + r() * 22; }
+  x.putImageData(d, 0, 0);
+  return (granoCache = c);
+}
+function fuente(ctx, peso, tam, fam, esp) {
+  ctx.font = `${peso} ${tam}px ${fam}`;
+  if ('letterSpacing' in ctx) ctx.letterSpacing = (esp || 0) + 'px';
+}
+function ajustar(ctx, txt, peso, tam, fam, maxW, min, esp) {
+  let t = tam;
+  for (; t > min; t -= 2) { fuente(ctx, peso, t, fam, esp); if (ctx.measureText(txt).width <= maxW) break; }
+  fuente(ctx, peso, t, fam, esp);
+  return t;
+}
+function lineas(ctx, txt, maxW, maxL) {
+  const out = []; let cur = '';
+  for (const w of txt.split(/\s+/).filter(Boolean)) {
+    const prueba = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(prueba).width <= maxW || !cur) cur = prueba;
+    else { out.push(cur); cur = w; }
+  }
+  if (cur) out.push(cur);
+  if (out.length > maxL) { out.length = maxL; out[maxL - 1] = out[maxL - 1].replace(/\s*\S*$/, '') + '…'; }
+  return out;
+}
+
+function dibujarTarjeta(cv, R) {
+  const W = 1500, H = 1000, ctx = cv.getContext('2d');
+  const F_DISP = 'Anton, Oswald, Impact, sans-serif', F_LAB = 'Oswald, "Arial Narrow", sans-serif', F_TXT = 'Archivo, Arial, sans-serif';
+  const TINTA = '#221C26', PAPEL = '#FBF8EC', SUAVE = '#5E5563', CINTA = '#141114';
+  ctx.save();
+  ctx.clearRect(0, 0, W, H);
+  ctx.textBaseline = 'alphabetic';
+
+  // franjas diagonales de la marca
+  const cols = ['#8A6B9E', '#1D879A', '#DF628A', '#A8CB72', '#F15A3D', '#DF628A'];
+  ctx.save(); ctx.translate(W / 2, H / 2); ctx.rotate(-0.42);
+  for (let i = -7; i <= 7; i++) { ctx.fillStyle = cols[(i + 70) % cols.length]; ctx.fillRect(-1300, i * 190 - 95, 2600, 191); }
+  ctx.restore();
+  // grano y desgaste de impresión
+  ctx.fillStyle = ctx.createPattern(grano(), 'repeat'); ctx.fillRect(0, 0, W, H);
+  const r = rng(R.codigo || 'x');
+  ctx.fillStyle = 'rgba(255,255,255,.22)';
+  for (let i = 0; i < 900; i++) ctx.fillRect(r() * W, r() * H, 1 + r() * 2.5, 1 + r() * 1.5);
+
+  // cinta
+  ctx.fillStyle = CINTA;
+  ctx.fillRect(0, 262, W, 54); ctx.fillRect(1128, 0, 54, H);
+  ctx.fillStyle = 'rgba(255,255,255,.07)';
+  ctx.fillRect(0, 270, W, 6); ctx.fillRect(1136, 0, 6, H);
+
+  // marca
+  fuente(ctx, 400, 200, F_DISP, 2);
+  ctx.fillStyle = TINTA; ctx.fillText('DISERIDÚ', 71, 241);
+  ctx.fillStyle = '#fff'; ctx.fillText('DISERIDÚ', 64, 234);
+
+  // etiqueta "Tarjeta de regalo"
+  fuente(ctx, 600, 38, F_LAB, 6);
+  const tw = ctx.measureText('TARJETA DE REGALO').width;
+  ctx.fillStyle = TINTA; ctx.fillRect(64, 346, tw + 44, 60);
+  ctx.fillStyle = PAPEL; ctx.fillText('TARJETA DE REGALO', 86, 391);
+
+  // panel crema
+  ctx.fillStyle = TINTA; ctx.fillRect(74, 450, 1010, 470);
+  ctx.fillStyle = PAPEL; ctx.fillRect(64, 440, 1010, 470);
+  ctx.lineWidth = 4; ctx.strokeStyle = TINTA; ctx.strokeRect(64, 440, 1010, 470);
+
+  // Para / De / mensaje
+  fuente(ctx, 600, 22, F_LAB, 4); ctx.fillStyle = SUAVE; ctx.fillText('PARA', 104, 494);
+  ajustar(ctx, (R.para.trim() || 'Nombre').toUpperCase(), 400, 76, F_DISP, 420, 34, 1);
+  ctx.fillStyle = R.para.trim() ? TINTA : 'rgba(34,28,38,.25)'; ctx.fillText((R.para.trim() || 'Nombre').toUpperCase(), 104, 572);
+  fuente(ctx, 600, 22, F_LAB, 4); ctx.fillStyle = SUAVE; ctx.fillText('DE', 104, 630);
+  ajustar(ctx, (R.de.trim() || '—').toUpperCase(), 400, 46, F_DISP, 420, 26, 1);
+  ctx.fillStyle = '#8A6B9E'; ctx.fillText((R.de.trim() || '—').toUpperCase(), 104, 680);
+  if (R.msg.trim()) {
+    fuente(ctx, 500, 24, F_TXT, 0); ctx.fillStyle = TINTA;
+    lineas(ctx, '“' + R.msg.trim() + '”', 420, 5).forEach((ln, i) => ctx.fillText(ln, 104, 736 + i * 33));
+  }
+  ctx.fillStyle = TINTA; ctx.fillRect(552, 474, 3, 404);
+
+  // qué incluye
+  fuente(ctx, 600, 22, F_LAB, 4); ctx.fillStyle = SUAVE; ctx.fillText('INCLUYE', 590, 494);
+  const el = ITEMS_REG.filter(it => R.items[it.k] > 0);
+  if (!el.length) { fuente(ctx, 500, 24, F_TXT, 0); ctx.fillStyle = 'rgba(34,28,38,.35)'; ctx.fillText('Elegí qué incluye', 590, 560); }
+  el.forEach((it, i) => {
+    const y = 560 + i * 92;
+    ajustar(ctx, nItem(it, R.items[it.k]).toUpperCase(), 400, 44, F_DISP, 450, 28, 1);
+    ctx.fillStyle = it.color; ctx.fillText(nItem(it, R.items[it.k]).toUpperCase(), 590, y);
+    fuente(ctx, 500, 21, F_LAB, 2); ctx.fillStyle = SUAVE; ctx.fillText((it.k === 'remeras' && R.items[it.k] > 1 ? 'Personalizables · frente y dorso' : it.tarjeta).toUpperCase(), 590, y + 32);
+  });
+
+  // moño
+  ctx.fillStyle = CINTA;
+  ctx.save(); ctx.translate(1155, 289);
+  [[-1, -0.38], [1, 0.38]].forEach(([s, rot]) => {
+    ctx.save(); ctx.rotate(rot); ctx.beginPath(); ctx.ellipse(s * 78, 0, 82, 38, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.08)'; ctx.beginPath(); ctx.ellipse(s * 78, -10, 60, 12, 0, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = CINTA; ctx.restore();
+  });
+  ctx.beginPath(); ctx.moveTo(-14, 10); ctx.lineTo(-70, 140); ctx.lineTo(-40, 128); ctx.lineTo(-22, 160); ctx.lineTo(8, 16); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(10, 10); ctx.lineTo(74, 130); ctx.lineTo(44, 124); ctx.lineTo(34, 158); ctx.lineTo(-6, 16); ctx.fill();
+  ctx.fillStyle = '#2b252e'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(-24, -26, 48, 52, 10) : ctx.rect(-24, -26, 48, 52); ctx.fill();
+  ctx.restore();
+
+  // etiqueta colgante con el código
+  ctx.strokeStyle = '#3a2f27'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(1160, 300); ctx.quadraticCurveTo(1250, 340, 1336, 418); ctx.stroke();
+  ctx.save(); ctx.translate(1336, 650); ctx.rotate(-0.04);
+  ctx.fillStyle = 'rgba(0,0,0,.28)';
+  const tag = () => { ctx.beginPath(); ctx.moveTo(-60, -250); ctx.lineTo(60, -250); ctx.lineTo(125, -195); ctx.lineTo(125, 250); ctx.lineTo(-125, 250); ctx.lineTo(-125, -195); ctx.closePath(); };
+  ctx.save(); ctx.translate(8, 8); tag(); ctx.fill(); ctx.restore();
+  tag(); ctx.fillStyle = '#E4D3B0'; ctx.fill(); ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(58,47,39,.45)'; ctx.stroke();
+  ctx.fillStyle = '#3a2f27'; ctx.beginPath(); ctx.arc(0, -226, 11, 0, Math.PI * 2); ctx.fill();
+  ctx.textAlign = 'center'; ctx.fillStyle = TINTA;
+  fuente(ctx, 600, 22, F_LAB, 4); ctx.fillText('TU CÓDIGO', 0, -160);
+  const cod = String(R.codigo || 'DSR-XXXXX').split('-');
+  fuente(ctx, 400, 54, F_DISP, 4); ctx.fillText(cod[0], 0, -92);
+  ajustar(ctx, cod[1] || '', 400, 82, F_DISP, 210, 40, 3); ctx.fillText(cod[1] || '', 0, -8);
+  ctx.fillRect(-90, 22, 180, 3);
+  fuente(ctx, 600, 18, F_LAB, 3); ctx.fillText('CANJEALA EN', 0, 66);
+  fuente(ctx, 600, 19, F_TXT, 0); ctx.fillText('diseridu.github.io', 0, 98); ctx.fillText('/tienda/#canjear', 0, 124);
+  ctx.fillRect(-90, 156, 180, 3);
+  fuente(ctx, 400, 44, F_DISP, 1); ctx.fillText('DISERIDÚ', 0, 220);
+  ctx.restore();
+
+  // pie
+  ctx.textAlign = 'left';
+  fuente(ctx, 600, 24, F_LAB, 3);
+  const pie = `DISERIDU.GITHUB.IO/TIENDA   ·   @${String(INSTAGRAM).toUpperCase()}`;
+  ctx.fillStyle = TINTA; ctx.fillText(pie, 67, 971);
+  ctx.fillStyle = '#fff'; ctx.fillText(pie, 64, 968);
+  ctx.restore();
+}
+
+/* ---------- Canje ---------- */
+function vCanjear() {
+  return `
+  <section class="cat-head regalo">
+    <div class="wrap"><h1>CANJEÁ TU TARJETA</h1><p>Poné el código que figura en la etiqueta de tu tarjeta de regalo.</p></div>
+    <span class="vertical">Regalá estilo</span>
+  </section>
+  <div class="wrap"><a class="back" href="#regalo">← REGALAR UNA TARJETA</a></div>
+  <div class="wrap canje">
+    <form id="canje-form" class="canje" novalidate style="padding:0">
+      <label class="r-campo"><span>Código</span><input type="text" id="canje-cod" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DSR-XXXXX" value="${esc(REGALO || '')}"></label>
+      <p class="r-msg" id="canje-aviso" aria-live="polite"></p>
+      <button class="btn" type="submit">Canjear</button>
+    </form>
+    <div id="canje-ok"></div>
+  </div>`;
+}
+function canjeOk(c) {
+  $('#canje-ok').innerHTML = `
+    <div class="canje-ok">
+      <strong>TARJETA ${c}</strong>
+      <p>Elegí cómo usarla. Tu código va a viajar en el pedido por WhatsApp y ahí lo confirmamos.</p>
+      <a class="btn" href="#tu-diseno">Estampá tu diseño</a>
+      <a class="btn alt" href="#remeras">Elegí del catálogo</a>
+      <a class="btn wpp" href="${linkWpp(`¡Hola Diseridú! Tengo una tarjeta de regalo para canjear.\n• Código: ${c}\n\n¿Cómo seguimos?`)}" target="_blank" rel="noopener">${ICON_WPP}Escribinos directo</a>
+    </div>`;
+}
+function canjeInit() {
+  if (REGALO) canjeOk(REGALO);
+  $('#canje-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const c = validarCodigo($('#canje-cod').value);
+    if (!c) { $('#canje-aviso').textContent = 'Ese código no es válido. Revisalo letra por letra (no lleva 0, 1, I ni O).'; $('#canje-ok').innerHTML = ''; return; }
+    $('#canje-aviso').textContent = '';
+    $('#canje-cod').value = c;
+    setRegalo(c); canjeOk(c);
+    $('#canje-ok').scrollIntoView({ block: 'start', behavior: 'smooth' });
+  });
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('#canje-banner-x')) { setRegalo(null); bannerRegalo(false); render(); }
+});
+
+/* Suma el código de la tarjeta de regalo que se está canjeando a cualquier pedido */
+function conRegalo(t, alFinal) {
+  if (!REGALO) return t;
+  const linea = `• Tarjeta de regalo: ${REGALO}`;
+  const i = t.lastIndexOf('\n\n');
+  return alFinal || i < 0 ? t.replace(/\n\n([^\n]*)$/, `\n${linea}\n\n$1`) : t.slice(0, i) + '\n' + linea + t.slice(i);
 }
 
 /* WhatsApp */
