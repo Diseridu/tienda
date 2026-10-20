@@ -473,6 +473,15 @@ a { color: inherit; }
 .canje-banner { background: var(--verde); border-bottom: 2px solid var(--tinta); }
 .canje-banner .wrap { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-block: 8px; font: 600 13px/1.2 var(--label); letter-spacing: .08em; text-transform: uppercase; }
 .canje-banner button { border: 2px solid var(--tinta); background: var(--papel); border-radius: 999px; padding: 5px 10px 4px; font: 600 12px/1 var(--label); letter-spacing: .1em; text-transform: uppercase; flex: none; }
+.cod-row { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; min-height: 30px; font: 600 12px/1.2 var(--label); letter-spacing: .1em; text-transform: uppercase; }
+.cod-link { border: 0; background: none; padding: 4px 0; font: inherit; letter-spacing: inherit; text-transform: inherit; text-decoration: underline; text-underline-offset: 3px; color: var(--tinta); }
+.cod-ok { background: var(--verde); border: 2px solid var(--tinta); border-radius: 999px; padding: 5px 10px 4px; }
+.cod-row.abierto input { flex: 1 1 auto; min-width: 0; max-width: 220px; border: 2px solid var(--tinta); border-radius: 999px; background: #fff; padding: 7px 12px 6px; font: 400 18px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; }
+.cod-aplicar { border: 2px solid var(--tinta); background: var(--tinta); color: var(--papel); border-radius: 999px; padding: 8px 12px 7px; font: inherit; letter-spacing: inherit; text-transform: inherit; }
+.cod-row .cod-link[data-cod-cancel] { font-size: 20px; text-decoration: none; padding-inline: 4px; }
+.cod-row.abierto { flex-wrap: wrap; }
+.cod-err { color: var(--coral); flex-basis: 100%; }
+.cod-err:empty { display: none; }
 /* ---------- Editor ---------- */
 .modo { background: var(--tinta); color: var(--papel); }
 .modo .wrap { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-block: 8px; }
@@ -1006,6 +1015,7 @@ function vProducto(p, colorInicial) {
   </div>
   <div class="buybar">
     <div class="wrap">
+      ${codigoRow()}
       <div class="resumen" id="resumen"></div>
       <a class="btn wpp" id="consultar" href="#" target="_blank" rel="noopener">${ICON_WPP}Consultar por WhatsApp</a>
     </div>
@@ -1047,7 +1057,7 @@ function render() {
   else if (h === 'canjear') { vista.innerHTML = vCanjear(); cat = 'regalo'; canjeInit(); }
   else if (h === 'editar') { vista.innerHTML = vEditor(); cat = h; }
   else { vista.innerHTML = vInicio(); }
-  bannerRegalo(!!prod || h === 'tu-diseno' || h === 'encendedor-3d' || CATS[h]);
+  bannerRegalo(!!CATS[h]);
   pendingColor = null;
   if (!$('#lightbox').hidden) cerrarLightbox();
   document.querySelectorAll('.tab').forEach(t => {
@@ -1057,7 +1067,7 @@ function render() {
   const activa = document.querySelector('.tabs .tab[aria-current]');
   if (activa) activa.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   tabsMas();
-  document.body.style.paddingBottom = (prod || conBarra || cat === 'editar') ? '118px' : '';
+  document.body.style.paddingBottom = (prod || conBarra || cat === 'editar') ? '156px' : '';
   $('#pie-ig').href = `https://www.instagram.com/${INSTAGRAM}/`;
   $('#pie-ig').textContent = '@' + INSTAGRAM;
   window.scrollTo(0, 0);
@@ -1221,6 +1231,7 @@ function vDiseno() {
   </div>
   <div class="buybar" data-gen>
     <div class="wrap">
+      ${codigoRow()}
       <div class="resumen" id="gen-resumen"></div>
       <div class="acciones">
         <button class="btn alt" type="button" id="gen-descargar">Descargar</button>
@@ -1838,6 +1849,7 @@ function vEncendedor3D() {
   </div>
   <div class="buybar" data-e3d>
     <div class="wrap">
+      ${codigoRow()}
       <div class="resumen" id="e3d-resumen"></div>
       <div class="acciones">
         <button class="btn alt" type="button" id="e3d-descargar">Descargar</button>
@@ -2884,6 +2896,42 @@ function canjeInit() {
 }
 document.addEventListener('click', e => {
   if (e.target.closest('#canje-banner-x')) { setRegalo(null); bannerRegalo(false); render(); }
+});
+
+/* ---------- "Agregar código" en la barra de compra ---------- */
+let codAbierto = false;
+function codigoRow() {
+  if (REGALO) return `<div class="cod-row" id="cod-row"><span class="cod-ok">Tarjeta de regalo <b>${REGALO}</b></span><button type="button" class="cod-link" data-cod-x>Quitar</button></div>`;
+  if (codAbierto) return `<div class="cod-row abierto" id="cod-row">
+      <input type="text" id="cod-input" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="DSR-XXXXX" aria-label="Código de tarjeta de regalo">
+      <button type="button" class="cod-aplicar" data-cod-ok>Aplicar</button>
+      <button type="button" class="cod-link" data-cod-cancel aria-label="Cancelar">×</button>
+      <span class="cod-err" id="cod-err" aria-live="polite"></span>
+    </div>`;
+  return `<div class="cod-row" id="cod-row"><button type="button" class="cod-link" data-cod-add>+ Agregar código de regalo</button></div>`;
+}
+function codigoRepintar(foco) {
+  const row = $('#cod-row'); if (!row) return;
+  row.outerHTML = codigoRow();
+  // actualiza el pedido de WhatsApp de la vista abierta
+  if ($('#resumen') && sel) resumen();
+  if ($('#gen-resumen')) genResumen();
+  if ($('#e3d-resumen')) e3dResumen();
+  if (foco && $('#cod-input')) $('#cod-input').focus();
+}
+function codigoAplicar() {
+  const c = validarCodigo($('#cod-input').value);
+  if (!c) { $('#cod-err').textContent = 'Código no válido'; return; }
+  codAbierto = false; setRegalo(c); codigoRepintar();
+}
+document.addEventListener('click', e => {
+  if (e.target.closest('[data-cod-add]')) { codAbierto = true; codigoRepintar(true); }
+  else if (e.target.closest('[data-cod-cancel]')) { codAbierto = false; codigoRepintar(); }
+  else if (e.target.closest('[data-cod-ok]')) codigoAplicar();
+  else if (e.target.closest('[data-cod-x]')) { setRegalo(null); bannerRegalo(false); codigoRepintar(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'cod-input') { e.preventDefault(); codigoAplicar(); }
 });
 
 /* Suma el código de la tarjeta de regalo que se está canjeando a cualquier pedido */
