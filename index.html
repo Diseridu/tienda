@@ -199,6 +199,33 @@ a { color: inherit; }
   font: 600 11px/1 var(--label); letter-spacing: .1em; text-transform: uppercase;
   padding: 4px 6px 3px;
 }
+.card .tag.lim { background: var(--rosa); color: #fff; border-color: var(--tinta); white-space: nowrap; }
+.lim { background: var(--rosa); border-block: 2px solid var(--tinta); margin-top: 0; }
+.lim .wrap { padding-block: 24px 26px; display: grid; gap: 12px; }
+.lim-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.lim-kicker { margin: 0 0 4px; font: 600 13px/1 var(--label); letter-spacing: .16em; text-transform: uppercase; color: var(--tinta); }
+.lim h2 { margin: 0; font: 400 clamp(46px, 13vw, 110px)/.86 var(--display); color: var(--papel); text-shadow: 2px 2px 0 var(--tinta); }
+.lim-badge {
+  flex: none; width: 86px; height: 86px; border-radius: 50%; display: grid; place-content: center; text-align: center;
+  background: #F2C14E; border: 2px solid var(--tinta); box-shadow: 4px 4px 0 var(--tinta); transform: rotate(-8deg);
+  font: 400 32px/.9 var(--display); color: var(--tinta);
+}
+.lim-badge small { display: block; font: 600 11px/1.1 var(--label); letter-spacing: .1em; text-transform: uppercase; }
+.lim-bajada { margin: 0; max-width: 40ch; font-weight: 500; color: var(--tinta); }
+.lim .fila {
+  display: grid; grid-auto-flow: column; grid-auto-columns: calc(50% - 6px); gap: 12px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 4px;
+}
+.lim .fila::-webkit-scrollbar { display: none; }
+.lim .fila .card { scroll-snap-align: start; }
+@media (min-width: 720px) { .lim .fila { grid-auto-columns: calc(25% - 9px); } }
+.lim .card .ph { background: var(--papel); }
+.lim .precio { color: var(--tinta); }
+.lim-nota {
+  margin: 0; justify-self: start; background: var(--rosa); color: #fff; border: 2px solid var(--tinta);
+  padding: 7px 10px 6px; font: 600 13px/1.2 var(--label); letter-spacing: .08em; text-transform: uppercase;
+}
+.eyebrow.lim-eyebrow { color: var(--rosa); }
 .card h3 { margin: 0; font: 600 16px/1.15 var(--label); letter-spacing: .03em; text-transform: uppercase; overflow-wrap: anywhere; }
 .card .meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .precio { font: 500 14px/1 var(--texto); color: var(--tinta-suave); font-variant-numeric: tabular-nums; }
@@ -744,6 +771,134 @@ a { color: inherit; }
  "whatsapp": "5491125843143",
  "instagram": "diseridu.estampado",
  "productos": [
+  {
+   "id": "como-conseguir-chicas",
+   "cat": "remeras",
+   "nombre": "Cómo conseguir chicas",
+   "precio": null,
+   "tag": "",
+   "fotos": {
+    "blanca": "lim-como-conseguir-chicas.jpg",
+    "negra": "lim-como-conseguir-chicas.jpg"
+   },
+   "base": "negra",
+   "solo": "negra",
+   "limitada": "2026-10-25",
+   "descuento": 20,
+   "desc": "La tapa de «Cómo conseguir chicas» de Charly García en remera negra. Edición limitada: está en la tienda solo esta semana, con 20% off."
+  },
+  {
+   "id": "clics-modernos",
+   "cat": "remeras",
+   "nombre": "Clics modernos",
+   "precio": null,
+   "tag": "",
+   "fotos": {
+    "blanca": "lim-clics-modernos.jpg",
+    "negra": "lim-clics-modernos.jpg"
+   },
+   "base": "negra",
+   "solo": "negra",
+   "limitada": "2026-10-25",
+   "descuento": 20,
+   "desc": "La tapa de «Clics modernos» de Charly García en remera negra. Edición limitada: está en la tienda solo esta semana, con 20% off."
+  },
+  {
+   "id": "filosofia-barata",
+   "cat": "remeras",
+   "nombre": "Filosofía barata",
+   "precio": null,
+   "tag": "",
+   "fotos": {
+    "blanca": "lim-filosofia-barata.jpg",
+    "negra": "lim-filosofia-barata.jpg"
+   },
+   "base": "blanca",
+   "solo": "blanca",
+   "limitada": "2026-10-25",
+   "descuento": 20,
+   "desc": "La tapa de «Filosofía barata» de Charly García en remera blanca. Edición limitada: está en la tienda solo esta semana, con 20% off."
+  },
+  {
+   "id": "la-logica-del-escorpion",
+   "cat": "remeras",
+   "nombre": "La lógica del escorpión",
+   "precio": null,
+   "tag": "",
+   "fotos": {
+    "blanca": "lim-la-logica-del-escorpion.jpg",
+    "negra": "lim-la-logica-del-escorpion.jpg"
+   },
+   "base": "blanca",
+   "solo": "blanca",
+   "limitada": "2026-10-25",
+   "descuento": 20,
+   "desc": "La tapa de «La lógica del escorpión» de Charly García en remera blanca. Edición limitada: está en la tienda solo esta semana, con 20% off."
+  },
+  {
+   "id": "parte-de-la-religion",
+   "cat": "remeras",
+   "nombre": "Parte de la religión",
+   "precio": null,
+   "tag": "",
+   "fotos": {
+    "blanca": "lim-parte-de-la-religion.jpg",
+    "negra": "lim-parte-de-la-religion.jpg"
+   },
+   "base": "blanca",
+   "solo": "blanca",
+   "limitada": "2026-10-25",
+   "descuento": 20,
+   "desc": "La tapa de «Parte de la religión» de Charly García en remera blanca. Edición limitada: está en la tienda solo esta semana, con 20% off."
+  },
+  {
+   "id": "piano-bar",
+   "cat": "remeras",
+   "nombre": "Piano Bar",
+   "precio": null,
+   "tag": "",
+   "fotos": {
+    "blanca": "lim-piano-bar.jpg",
+    "negra": "lim-piano-bar.jpg"
+   },
+   "base": "negra",
+   "solo": "negra",
+   "limitada": "2026-10-25",
+   "descuento": 20,
+   "desc": "La tapa de «Piano Bar» de Charly García en remera negra. Edición limitada: está en la tienda solo esta semana, con 20% off."
+  },
+  {
+   "id": "random",
+   "cat": "remeras",
+   "nombre": "Random",
+   "precio": null,
+   "tag": "",
+   "fotos": {
+    "blanca": "lim-random.jpg",
+    "negra": "lim-random.jpg"
+   },
+   "base": "negra",
+   "solo": "negra",
+   "limitada": "2026-10-25",
+   "descuento": 20,
+   "desc": "La tapa de «Random» de Charly García en remera negra. Edición limitada: está en la tienda solo esta semana, con 20% off."
+  },
+  {
+   "id": "pubis-angelical",
+   "cat": "remeras",
+   "nombre": "Pubis angelical",
+   "precio": null,
+   "tag": "",
+   "fotos": {
+    "blanca": "lim-pubis-angelical.jpg",
+    "negra": "lim-pubis-angelical.jpg"
+   },
+   "base": "blanca",
+   "solo": "blanca",
+   "limitada": "2026-10-25",
+   "descuento": 20,
+   "desc": "La tapa de «Pubis angelical» de Charly García en remera blanca. Edición limitada: está en la tienda solo esta semana, con 20% off."
+  },
   {
    "id": "la-unica-norma",
    "cat": "remeras",
@@ -2501,6 +2656,15 @@ function rutasPlanas(lista) {
 DATOS.productos = rutasPlanas(DATOS.productos.filter(p => CATS[p.cat]));
 PRODUCTOS = DATOS.productos;
 
+/* Edición limitada: un producto con "limitada": "AAAA-MM-DD" se ve en la tienda hasta ese día inclusive
+   (hora de Buenos Aires) y después desaparece solo. "descuento": 20 muestra el 20% off. */
+const HOY = (() => { try { return new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Argentina/Buenos_Aires' }); } catch (e) { return new Date().toISOString().slice(0, 10); } })();
+const esLimitada = p => !!(p && p.limitada) && HOY <= p.limitada;
+if (!ES_EDITOR) PRODUCTOS = DATOS.productos.filter(p => !p.limitada || esLimitada(p));
+const fechaCorta = f => { const [y, m, d] = f.split('-').map(Number); return ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][new Date(y, m - 1, d).getDay()] + ' ' + d + '/' + m; };
+const promoCorto = p => `Edición limitada${p.descuento ? ` con ${p.descuento}% off` : ''}`;
+const promoTxt = p => `Edición limitada${p.descuento ? ` · ${p.descuento}% off` : ''} · hasta el ${fechaCorta(p.limitada)}`;
+
 /* =========================================================
    Estado
    ========================================================= */
@@ -2518,6 +2682,7 @@ function textoConsulta(p, o = {}) {
     lineas.push(`• Color: ${o.color ? COLOR_TXT[o.color] : 'a definir'}`);
     lineas.push(`• Talle: ${o.talle || 'a definir'}`);
   }
+  if (esLimitada(p)) lineas.push(`• ${promoCorto(p)}`);
   lineas.push(`• Cantidad: ${o.cant || 1}`);
   lineas.push('', '¿Me pasan precio y cómo coordinamos el envío?');
   return conRegalo(lineas.join('\n'));
@@ -2536,6 +2701,7 @@ function vInicio() {
       <a class="handle" href="https://www.instagram.com/${INSTAGRAM}/" target="_blank" rel="noopener">@${INSTAGRAM}</a>
     </div>
   </section>
+  ${limSeccion()}
   <section class="wrap section">
     <p class="eyebrow">Elegí qué buscás</p>
     <div class="cats">
@@ -2559,16 +2725,36 @@ function vInicio() {
   </section>
   <section class="wrap section">
     <p class="eyebrow">Recién estampadas</p>
-    <div class="grid">${PRODUCTOS.filter(p => p.cat === 'remeras').slice(0, 4).map(card).join('')}</div>
+    <div class="grid">${PRODUCTOS.filter(p => p.cat === 'remeras' && !p.limitada).slice(0, 4).map(card).join('')}</div>
+  </section>`;
+}
+
+function limSeccion() {
+  const l = PRODUCTOS.filter(esLimitada);
+  if (!l.length) return '';
+  const dto = Math.max(0, ...l.map(p => Number(p.descuento) || 0));
+  const hasta = l.map(p => p.limitada).sort().pop();
+  return `
+  <section class="lim" aria-label="Edición limitada">
+    <div class="wrap">
+      <div class="lim-head">
+        <div><p class="lim-kicker">Solo esta semana</p><h2>EDICIÓN LIMITADA</h2></div>
+        ${dto ? `<span class="lim-badge">${dto}%<small>off</small></span>` : ''}
+      </div>
+      <p class="lim-bajada">${l.length} ${l.length === 1 ? 'diseño' : 'diseños'} que están en la tienda hasta el ${fechaCorta(hasta)}${dto ? `, con ${dto}% off` : ''}. Después se van.</p>
+      <div class="fila">${l.map(card).join('')}</div>
+    </div>
   </section>`;
 }
 
 function card(p) {
-  const colores = p.cat === 'remeras' ? `<span class="dots" aria-label="Colores: blanca y negra"><i class="dot blanca"></i><i class="dot negra"></i></span>` : '';
+  const colores = p.cat !== 'remeras' ? ''
+    : p.solo ? `<span class="dots" aria-label="Solo ${COLOR_TXT[p.solo].toLowerCase()}"><i class="dot ${p.solo}"></i></span>`
+    : `<span class="dots" aria-label="Colores: blanca y negra"><i class="dot blanca"></i><i class="dot negra"></i></span>`;
   const color = p.cat === 'remeras' && filtroColor !== 'todas' ? filtroColor : null;
   return `<div class="card${p.cat === 'stickers' ? ' sticker' : ''}">
     <a class="card-link" href="#${p.id}" data-color="${color || ''}">
-      <div class="ph"><img loading="lazy" src="${fotoDe(p, color)}" alt="${esc(p.nombre)}">${p.tag ? `<span class="tag">${esc(p.tag)}</span>` : ''}</div>
+      <div class="ph"><img loading="lazy" src="${fotoDe(p, color)}" alt="${esc(p.nombre)}">${esLimitada(p) ? `<span class="tag lim">Ed. limitada</span>` : p.tag ? `<span class="tag">${esc(p.tag)}</span>` : ''}</div>
       <h3>${esc(p.nombre)}</h3>
     </a>
     <div class="meta"><span class="precio">${fmt(p.precio)}</span>${colores}</div>
@@ -2581,6 +2767,7 @@ function card(p) {
 function vCategoria(cat) {
   const c = CATS[cat];
   const lista = PRODUCTOS.filter(p => p.cat === cat);
+  const lim = lista.filter(esLimitada), resto = lista.filter(p => !lim.includes(p));
   const filtro = cat === 'remeras' ? `<div class="filtro" role="group" aria-label="Ver en color">
       ${['todas', 'blanca', 'negra'].map(f => `<button type="button" data-filtro="${f}" aria-pressed="${filtroColor === f}">${f === 'todas' ? 'Original' : COLOR_TXT[f]}</button>`).join('')}
     </div>` : '';
@@ -2593,16 +2780,19 @@ function vCategoria(cat) {
     <div class="toolbar"><span class="count">${lista.length} diseños</span>${filtro}</div>
     ${cat === 'remeras' ? `<a class="cta-3d" href="#tu-diseno"><div><strong>ESTAMPÁ TU DISEÑO</strong><small>Subí tu imagen, ubicala en la remera y mirá cómo queda antes de pedirla.</small></div><img src="norma-negra.jpg" alt=""></a>` : ''}
     ${cat === 'encendedores' ? `<a class="cta-3d" href="#encendedor-3d"><div><strong>ARMÁ TU FUEGO EN 3D</strong><small>Elegí un diseño o subí el tuyo, giralo y mirá cómo queda antes de pedirlo.</small></div><img src="fuego-sol.jpg" alt=""></a>` : ''}
-    <div class="grid">${lista.map(card).join('')}</div>
+    ${lim.length ? `<p class="eyebrow lim-eyebrow">${promoTxt(lim[0])}</p>
+    <div class="grid">${lim.map(card).join('')}</div>
+    <p class="eyebrow">${cat === 'remeras' ? 'Todas las remeras' : 'Todos los diseños'}</p>` : ''}
+    <div class="grid">${resto.map(card).join('')}</div>
   </div>`;
 }
 
 function vProducto(p, colorInicial) {
   const remera = p.cat === 'remeras';
-  sel = { id: p.id, color: remera ? (colorInicial || p.base) : null, talle: null, cant: 1 };
+  sel = { id: p.id, color: remera ? (p.solo || colorInicial || p.base) : null, talle: null, cant: 1 };
   const relacionados = PRODUCTOS.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4);
   const specs = remera
-    ? [['Estampa', 'Vinilo textil impreso'], ['Colores', 'Blanca o negra'], ['Talles', TALLES.join(' · ')], ['Cuidados', 'Lavar del revés con agua fría. No planchar sobre la estampa ni usar secarropas.']]
+    ? [['Estampa', 'Vinilo textil impreso'], ['Colores', p.solo ? 'Solo ' + COLOR_TXT[p.solo].toLowerCase() : 'Blanca o negra'], ['Talles', TALLES.join(' · ')], ['Cuidados', 'Lavar del revés con agua fría. No planchar sobre la estampa ni usar secarropas.']]
     : p.cat === 'totes'
       ? [['Bolsa', 'Tote negra con manijas largas'], ['Estampa', 'Vinilo textil impreso'], ['Cuidados', 'Lavar a mano del revés con agua fría. No planchar sobre la estampa.']]
       : p.cat === 'encendedores'
@@ -2617,17 +2807,18 @@ function vProducto(p, colorInicial) {
           <img id="main-img" src="${fotoDe(p, sel.color)}" alt="${esc(p.nombre)}${remera ? ' en remera ' + COLOR_TXT[sel.color].toLowerCase() : ''}">
           <span class="zoom-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4M11 8v6M8 11h6"/></svg>Ampliar</span>
         </button>
-        ${remera ? `<div class="thumbs" role="group" aria-label="Vistas">
+        ${remera && !p.solo ? `<div class="thumbs" role="group" aria-label="Vistas">
           ${['blanca', 'negra'].map(c => `<button type="button" data-thumb="${c}" aria-pressed="${sel.color === c}" aria-label="Ver en ${COLOR_TXT[c].toLowerCase()}"><img src="${p.fotos[c]}" alt=""></button>`).join('')}
         </div>` : ''}
       </div>
       <div class="info">
         <h1>${esc(p.nombre)}</h1>
         <div class="precio-big">${fmt(p.precio)}</div>
+        ${esLimitada(p) ? `<p class="lim-nota">${promoTxt(p)}</p>` : ''}
         ${remera ? `
         <div class="opt">
           <div class="opt-label">Color <em id="color-txt">${COLOR_TXT[sel.color]}</em></div>
-          <div class="colores" role="group" aria-label="Color de remera">${botonesColor(sel.color)}</div>
+          <div class="colores" role="group" aria-label="Color de remera">${botonesColor(sel.color, p)}</div>
         </div>
         <div class="opt">
           <div class="opt-label">Talle <em id="talle-txt">Elegí uno</em></div>
@@ -2661,8 +2852,8 @@ function vProducto(p, colorInicial) {
   </div>`;
 }
 
-function botonesColor(actual) {
-  return ['blanca', 'negra'].map(c => `<button type="button" class="color" data-c="${c}" aria-pressed="${actual === c}"><span class="sw"></span>${COLOR_TXT[c]}</button>`).join('');
+function botonesColor(actual, p) {
+  return (p && p.solo ? [p.solo] : ['blanca', 'negra']).map(c => `<button type="button" class="color" data-c="${c}" aria-pressed="${actual === c}"><span class="sw"></span>${COLOR_TXT[c]}</button>`).join('');
 }
 
 function resumen() {
@@ -2775,7 +2966,7 @@ document.addEventListener('click', e => {
 /* Lightbox */
 function abrirLightbox() {
   const p = PRODUCTOS.find(x => x.id === sel.id);
-  verImagen(fotoDe(p, sel.color), p.nombre, '', p.cat === 'remeras' ? botonesColor(sel.color) : '');
+  verImagen(fotoDe(p, sel.color), p.nombre, '', p.cat === 'remeras' ? botonesColor(sel.color, p) : '');
 }
 function verImagen(src, titulo, nota = '', colores = '') {
   $('#lb-titulo').textContent = titulo;
@@ -3142,6 +3333,12 @@ function edItem(p, i, lista) {
       </div>
       ${remera ? `<label class="ed-campo"><span>Foto que se ve primero</span><select id="ed-base-${i}" data-campo="base">
         ${['blanca', 'negra'].map(c => `<option value="${c}" ${p.base === c ? 'selected' : ''}>Remera ${c}</option>`).join('')}</select></label>` : ''}
+      <div class="ed-dos">
+        ${remera ? `<label class="ed-campo"><span>Colores</span><select id="ed-solo-${i}" data-campo="solo">
+          ${[['', 'Blanca y negra'], ['blanca', 'Solo blanca'], ['negra', 'Solo negra']].map(([v, t]) => `<option value="${v}" ${(p.solo || '') === v ? 'selected' : ''}>${t}</option>`).join('')}</select></label>` : ''}
+        <label class="ed-campo"><span>Ed. limitada hasta</span><input type="date" id="ed-lim-${i}" data-campo="limitada" value="${esc(p.limitada || '')}"></label>
+        <label class="ed-campo"><span>Descuento (%)</span><input type="number" inputmode="numeric" min="0" max="90" id="ed-dto-${i}" data-campo="descuento" value="${p.descuento ?? ''}" placeholder="Sin descuento"></label>
+      </div>
       <label class="ed-campo"><span>Descripción</span><textarea id="ed-desc-${i}" data-campo="desc">${esc(p.desc)}</textarea></label>
     </div>
     <div class="ed-acciones" data-ed>
@@ -3272,6 +3469,8 @@ document.addEventListener('input', e => {
   const p = PRODUCTOS[Number(item.dataset.i)];
   const k = el.dataset.campo;
   if (k === 'precio') p.precio = el.value === '' ? null : Math.max(0, Number(el.value));
+  else if (k === 'descuento') { if (el.value === '') delete p.descuento; else p.descuento = Math.max(0, Number(el.value)); }
+  else if ((k === 'limitada' || k === 'solo') && !el.value) delete p[k];
   else p[k] = el.value;
   if (k === 'nombre' && p.nuevo) {
     p.id = idUnico(slug(el.value), p);
@@ -4626,6 +4825,7 @@ function carroInfo(it) {
   const p = PRODUCTOS.find(x => x.id === it.id);
   const det = [TIPO[p.cat]];
   if (p.cat === 'remeras') det.push(COLOR_TXT[it.color], 'Talle ' + it.talle);
+  if (esLimitada(p)) det.push('Ed. limitada' + (p.descuento ? ` −${p.descuento}%` : ''));
   return { titulo: p.nombre, detalle: det.join(' · '), foto: fotoDe(p, it.color), sticker: p.cat === 'stickers', p };
 }
 function textoCarrito() {
@@ -4635,7 +4835,7 @@ function textoCarrito() {
     if (it.custom) linea = `${it.titulo}${it.detalle ? ' (' + it.detalle + ')' : ''}`;
     else {
       const p = PRODUCTOS.find(x => x.id === it.id);
-      linea = `${TIPO[p.cat]} "${p.nombre}"${p.cat === 'remeras' ? ` (${COLOR_TXT[it.color]}, talle ${it.talle})` : ''}`;
+      linea = `${TIPO[p.cat]} "${p.nombre}"${p.cat === 'remeras' ? ` (${COLOR_TXT[it.color]}, talle ${it.talle})` : ''}${esLimitada(p) ? ' — ' + promoCorto(p).toLowerCase() : ''}`;
     }
     l.push(`${i + 1}. ${linea} × ${it.cant}`);
   });
