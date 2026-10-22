@@ -355,7 +355,23 @@ a { color: inherit; }
 .pie p { margin: 0; font-size: 14px; color: var(--tinta-suave); }
 .pie a { font-weight: 600; }
 
-/* ---------- Generador de estampas ---------- */
+/* ---------- Generador de remeras ---------- */
+.g-lienzo { width: 100%; max-width: 100%; aspect-ratio: 1 / 1; display: block; border: 2px solid var(--tinta); background: #9fd0f0; touch-action: none; cursor: grab; }
+.g-lienzo.drag { cursor: grabbing; }
+.g-swatches { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 8px; }
+.g-swatches button {
+  aspect-ratio: 1 / 1; width: 100%; padding: 0; border-radius: 50%;
+  background: var(--sw); border: 2px solid var(--papel); box-shadow: 0 0 0 1.5px var(--linea);
+}
+.g-swatches button[aria-pressed="true"] { box-shadow: 0 0 0 2.5px var(--tinta); }
+.g-fila { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
+.g-fila .ayuda { flex: 1 1 180px; overflow-wrap: anywhere; }
+.g-chip {
+  border: 2px solid var(--tinta); background: transparent; border-radius: 999px;
+  padding: 8px 12px 7px; font: 600 12px/1 var(--label); letter-spacing: .1em; text-transform: uppercase;
+}
+.g-fila input[type=color] { width: 48px; height: 36px; border: 2px solid var(--tinta); padding: 0; background: none; border-radius: 8px; }
+#gen-op-imagen .subir { padding: 14px; }
 .cat-head.diseno { background: var(--coral); }
 .cat-head.diseno .wrap { padding-right: 56px; }
 .cat-head.diseno h1 { color: var(--papel); }
@@ -2993,73 +3009,219 @@ document.addEventListener('keydown', e => {
 
 
 /* =========================================================
-   Generador de estampas (Tu diseño)
+   Generador de remeras (Tu diseño): lienzo de 1080 × 1080 con fondo de agua,
+   remera en 24 colores y estampa en el frente, el dorso o los dos.
+   Las imágenes de base (gen-*.webp) viven en la raíz del repo.
    ========================================================= */
-const BASES = { blanca: 'base-blanca.jpg', negra: 'base-negra.jpg' };
-const ZONA = { x: .31, y: .25, w: .38, h: .43 };   // área de impresión, en fracción de la foto
-const ANCHO_FOTO_CM = 87;                           // la foto completa equivale a ~87 cm en un talle L
-const gen = { src: null, img: null, w: 0, h: 0, color: 'blanca', talle: null, cant: 1,
-              escala: 100, rot: 0, op: 100, x: .5, y: .465, zona: true, pos: 'centro' };
+const GEN_S = 1080, GEN_TEE = { x: 210, y: 162, w: 660 };
+const GEN_DUO = { s: .74, y: 262, x: { frente: 22, dorso: 570 } }; // frente y dorso lado a lado
+const GEN_ARCH = {"tee_negra": "gen-tee-negra.webp", "shade_negra": "gen-luz-negra.webp", "tee_blanca": "gen-tee-blanca.webp", "shade_blanca": "gen-luz-blanca.webp", "sample": "gen-ejemplo.jpg", "tee_negra_dorso": "gen-tee-negra-dorso.webp", "shade_negra_dorso": "gen-luz-negra-dorso.webp", "tee_blanca_dorso": "gen-tee-blanca-dorso.webp", "shade_blanca_dorso": "gen-luz-blanca-dorso.webp", "luz": "gen-tenido.webp", "luz_dorso": "gen-tenido-dorso.webp"};
+const GEN_COLORES = [{id:'negra',n:'Negro',hex:'#151515'},{id:'blanca',n:'Blanco',hex:'#FFFFFF'},{id:'crudo',n:'Crudo',hex:'#E8E6D8'},{id:'gris-melange',n:'Gris melange',hex:'#C0C2BF'},{id:'beige',n:'Beige',hex:'#C9BC9A'},{id:'chocolate',n:'Chocolate',hex:'#463334'},{id:'amarillo',n:'Amarillo',hex:'#F4AA06'},{id:'naranja',n:'Naranja',hex:'#FA4505'},{id:'rojo',n:'Rojo',hex:'#CF0212'},{id:'fucsia',n:'Fucsia',hex:'#D1024F'},{id:'bordo',n:'Bordó',hex:'#7E0722'},{id:'rosa-bebe',n:'Rosa bebé',hex:'#F6A9B0'},{id:'rosa-chicle',n:'Rosa chicle',hex:'#F07AAE'},{id:'violeta',n:'Violeta',hex:'#A43994'},{id:'lila',n:'Lila',hex:'#A49BD8'},{id:'celeste',n:'Celeste',hex:'#78A3DE'},{id:'azul-francia',n:'Azul francia',hex:'#0562BE'},{id:'azul-marino',n:'Azul marino',hex:'#101E39'},{id:'verde-agua',n:'Verde agua',hex:'#A3D7AF'},{id:'verde-benetton',n:'Verde benetton',hex:'#059B79'},{id:'verde-oliva',n:'Verde oliva',hex:'#8E9C52'},{id:'verde-militar',n:'Verde militar',hex:'#4C5428'},{id:'verde-boston',n:'Verde boston',hex:'#1F453E'},{id:'gris-topo',n:'Gris topo',hex:'#33484E'}];
+const genColor = id => GEN_COLORES.find(x => x.id === id) || GEN_COLORES[0];
+const gen = {
+  color: 'negra', fondo: 'agua', vista: 'frente', lado: 'frente', tela: true, seed: 7, colorFondo: '#8cc8ef', bgImg: null,
+  talle: null, cant: 1, listo: false,
+  lados: {
+    frente: { diseno: null, ejemplo: true, nombre: '', info: 'Ejemplo cargado: reemplazalo por tu diseño.', ancho: 31, alto: 24, dx: 0 },
+    dorso: { diseno: null, ejemplo: false, nombre: '', info: 'El dorso está liso. Subí una imagen para estampar la espalda.', ancho: 34, alto: 12, dx: 0 }
+  }
+};
+const genL = () => gen.lados[gen.lado];
+const genImg = {};
+let genCarga = null;
+
+function cargarImg(src) {
+  return new Promise((ok, mal) => { const i = new Image(); i.onload = () => ok(i); i.onerror = mal; i.src = src; });
+}
+// las bases se bajan recién la primera vez que alguien entra al generador
+function genAssets() {
+  if (!genCarga) genCarga = (async () => {
+    const claves = ['tee_negra', 'tee_blanca', 'shade_negra', 'shade_blanca', 'tee_negra_dorso', 'tee_blanca_dorso', 'shade_negra_dorso', 'shade_blanca_dorso', 'luz', 'luz_dorso'];
+    const imgs = await Promise.all(claves.map(k => cargarImg(GEN_ARCH[k])));
+    claves.forEach((k, i) => { genImg[k] = imgs[i]; });
+    if (gen.lados.frente.ejemplo && !gen.lados.frente.diseno) gen.lados.frente.diseno = await cargarImg(GEN_ARCH.sample);
+    gen.listo = true;
+  })().catch(err => { genCarga = null; throw err; });
+  return genCarga;
+}
+
+/* ---------- fondo de agua procedural ---------- */
+const GEN_PAL = [[132,204,240],[108,192,252],[132,192,240],[84,168,216],[120,192,240],[132,204,252],[144,204,252],[108,192,240],[96,180,236],[84,180,228],[72,160,220],[150,214,250]];
+function genRnd(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 100000) / 100000; }; }
+let genBg = null, genBgKey = '';
+function genFondoAgua(seed) {
+  const S = GEN_S, r = genRnd(seed * 9973 + 11), cv = document.createElement('canvas'); cv.width = cv.height = S;
+  const g = cv.getContext('2d');
+  const pick = () => GEN_PAL[Math.floor(r() * GEN_PAL.length)];
+  // capa 1: manchas grandes difusas
+  const lo = document.createElement('canvas'); lo.width = 12; lo.height = 12; const l = lo.getContext('2d');
+  for (let y = 0; y < 12; y++) for (let x = 0; x < 12; x++) { l.fillStyle = `rgb(${pick()})`; l.fillRect(x, y, 1, 1); }
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; g.drawImage(lo, 0, 0, S, S);
+  // capa 2: bloques estirados en horizontal, tipo foto de agua comprimida
+  const md = document.createElement('canvas'); md.width = 18; md.height = 60; const m = md.getContext('2d');
+  for (let y = 0; y < 60; y++) for (let x = 0; x < 18; x++) { const p = pick(); m.fillStyle = `rgba(${p},${(0.25 + r() * 0.45).toFixed(2)})`; m.fillRect(x, y, 1, 1); }
+  g.filter = 'blur(14px)'; g.drawImage(md, -20, -20, S + 40, S + 40); g.filter = 'none';
+  // capa 3: pixelado de compresión
+  const px = document.createElement('canvas'); px.width = px.height = 135; const q = px.getContext('2d');
+  for (let y = 0; y < 135; y++) for (let x = 0; x < 135; x++) { if (r() < .5) continue; const p = pick(); q.fillStyle = `rgba(${p},${(r() * 0.2).toFixed(3)})`; q.fillRect(x, y, 1, 1); }
+  g.imageSmoothingEnabled = false; g.drawImage(px, 0, 0, S, S); g.imageSmoothingEnabled = true;
+  // trazos horizontales suaves
+  for (let i = 0; i < 60; i++) {
+    const p = pick(); g.fillStyle = `rgba(${p},${(0.18 + r() * 0.25).toFixed(2)})`;
+    const w = 80 + r() * 360, h = 14 + r() * 46; g.filter = `blur(${(2 + r() * 6).toFixed(1)}px)`; g.fillRect(r() * S - 80, r() * S, w, h);
+  }
+  g.filter = 'none';
+  const out = document.createElement('canvas'); out.width = out.height = S; const o = out.getContext('2d');
+  o.filter = 'saturate(1.35) contrast(1.06)'; o.drawImage(cv, 0, 0); o.filter = 'none';
+  return out;
+}
+function genPintarFondo(ctx) {
+  const S = GEN_S;
+  if (gen.fondo === 'agua') { const k = 'a' + gen.seed; if (genBgKey !== k) { genBg = genFondoAgua(gen.seed); genBgKey = k; } ctx.drawImage(genBg, 0, 0); }
+  else if (gen.fondo === 'liso') { ctx.fillStyle = gen.colorFondo; ctx.fillRect(0, 0, S, S); }
+  else if (gen.bgImg) { const i = gen.bgImg, s = Math.max(S / i.width, S / i.height), w = i.width * s, h = i.height * s; ctx.drawImage(i, (S - w) / 2, (S - h) / 2, w, h); }
+  else { ctx.fillStyle = '#8cc8ef'; ctx.fillRect(0, 0, S, S); }
+}
+
+/* ---------- remera y estampa ---------- */
+const genTenidas = {};
+function genTee(lado) {
+  const suf = lado === 'dorso' ? '_dorso' : '';
+  if (gen.color === 'negra' || gen.color === 'blanca') return genImg['tee_' + gen.color + suf];
+  const k = gen.color + suf; if (genTenidas[k]) return genTenidas[k];
+  // remera blanca teñida: color plano por el mapa de luz de la tela, recortado a la silueta
+  const base = genImg['tee_blanca' + suf], luz = genImg['luz' + suf], cv = document.createElement('canvas');
+  cv.width = base.width; cv.height = base.height; const g = cv.getContext('2d');
+  g.fillStyle = genColor(gen.color).hex; g.fillRect(0, 0, cv.width, cv.height);
+  g.globalCompositeOperation = 'multiply'; g.drawImage(luz, 0, 0);
+  g.globalCompositeOperation = 'destination-in'; g.drawImage(base, 0, 0);
+  return genTenidas[k] = cv;
+}
+const genShade = lado => genImg['shade_' + (gen.color === 'negra' ? 'negra' : 'blanca') + (lado === 'dorso' ? '_dorso' : '')];
+function genRect(lado) { // en coordenadas de la remera (660 px de ancho)
+  const l = gen.lados[lado], d = l.diseno; if (!d) return null;
+  const w = GEN_TEE.w * l.ancho / 100, h = w * d.height / d.width;
+  return { x: GEN_TEE.w / 2 - w / 2 + l.dx, y: genTee(lado).height * l.alto / 100, w, h };
+}
+const genUbic = lado => gen.vista === 'ambos' ? { x: GEN_DUO.x[lado], y: GEN_DUO.y, s: GEN_DUO.s } : { x: GEN_TEE.x, y: GEN_TEE.y, s: 1 };
+// medida aproximada de la estampa: el cuerpo ocupa ~66% del ancho dibujado; pecho de un talle L ≈ 54 cm
+function genCm(lado) {
+  if (!gen.listo) return null;
+  const r = genRect(lado); if (!r) return null;
+  const cm = r.w / (GEN_TEE.w * 0.66) * 54;
+  return { w: Math.round(cm), h: Math.round(cm * r.h / r.w) };
+}
+const genTmp = document.createElement('canvas');
+function genRemera(ctx, lado) {
+  const tee = genTee(lado), shade = genShade(lado), u = genUbic(lado), W = tee.width * u.s, H = tee.height * u.s;
+  ctx.save(); ctx.filter = 'blur(18px)'; ctx.globalAlpha = .22; ctx.drawImage(tee, u.x + 6 * u.s, u.y + 14 * u.s, W, H); ctx.restore();
+  ctx.drawImage(tee, u.x, u.y, W, H);
+  const r = genRect(lado); if (!r) return;
+  const l = gen.lados[lado], t = genTmp.getContext('2d');
+  genTmp.width = tee.width; genTmp.height = tee.height;
+  t.globalCompositeOperation = 'source-over'; t.globalAlpha = 1; t.drawImage(l.diseno, r.x, r.y, r.w, r.h);
+  if (gen.tela) { // pliegues de la tela con luz suave, solo dentro del diseño
+    t.globalCompositeOperation = 'soft-light'; t.globalAlpha = gen.color === 'blanca' ? .9 : gen.color === 'negra' ? .7 : .8; t.drawImage(shade, 0, 0);
+    t.globalAlpha = 1; t.globalCompositeOperation = 'destination-in'; t.drawImage(l.diseno, r.x, r.y, r.w, r.h);
+  }
+  t.globalCompositeOperation = 'destination-in'; t.drawImage(tee, 0, 0); t.globalCompositeOperation = 'source-over';
+  ctx.drawImage(genTmp, u.x, u.y, W, H);
+}
+function genDibujar() {
+  const c = $('#gen-c'); if (!c) return;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, GEN_S, GEN_S); genPintarFondo(ctx);
+  if (!gen.listo) return;
+  if (gen.vista === 'ambos') { genRemera(ctx, 'frente'); genRemera(ctx, 'dorso'); }
+  else genRemera(ctx, gen.vista);
+  const l = genL(), m = genCm(gen.lado), nom = gen.lado === 'frente' ? 'Frente' : 'Dorso';
+  $('#gen-medida').textContent = m ? `${nom}: ≈ ${m.w} × ${m.h} cm (talle L)` : `${nom}: sin diseño`;
+  $('#gen-info').textContent = gen.vista === 'ambos' ? 'Tocá una remera para editar ese lado.' : 'Arrastrá la estampa para moverla.';
+  $('#gen-ancho-v').textContent = l.ancho + '%';
+  $('#gen-alto-v').textContent = l.alto + '%';
+}
+function genSync() { // botones y sliders según el lado activo
+  const l = genL();
+  document.querySelectorAll('[data-glado]').forEach(x => x.setAttribute('aria-pressed', x.dataset.glado === gen.lado));
+  document.querySelectorAll('[data-gvista]').forEach(x => x.setAttribute('aria-pressed', x.dataset.gvista === gen.vista));
+  document.querySelectorAll('[data-gcolor]').forEach(x => x.setAttribute('aria-pressed', x.dataset.gcolor === gen.color));
+  document.querySelectorAll('[data-gfondo]').forEach(x => x.setAttribute('aria-pressed', x.dataset.gfondo === gen.fondo));
+  ['agua', 'liso', 'imagen'].forEach(k => { const el = $('#gen-op-' + k); if (el) el.hidden = k !== gen.fondo; });
+  $('#gen-ancho').value = l.ancho; $('#gen-alto').value = l.alto;
+  $('#gen-nombre').textContent = l.info;
+  $('#gen-subir-txt').textContent = (l.diseno && !l.ejemplo ? 'Cambiar imagen del ' : 'Elegir imagen para el ') + (gen.lado === 'frente' ? 'frente' : 'dorso');
+  $('#gen-quitar').hidden = !l.diseno;
+  $('#gen-color-txt').textContent = genColor(gen.color).n;
+  $('#gen-tela').setAttribute('aria-pressed', gen.tela);
+  genResumen();
+}
 
 function vDiseno() {
+  const lado = gen.lado;
   return `
   <section class="cat-head diseno">
-    <div class="wrap"><h1>TU DISEÑO</h1><p>Subí tu imagen, ubicala sobre la remera y consultanos para estamparla en vinilo textil.</p></div>
+    <div class="wrap"><h1>TU DISEÑO</h1><p>Subí tu imagen, elegí el color de la remera y ubicala en el frente, el dorso o los dos. Después nos la pedís por WhatsApp.</p></div>
     <span class="vertical">Usá tu estilo</span>
   </section>
   <div class="wrap"><a class="back" href="#remeras">← REMERAS</a></div>
   <div class="wrap generador" data-gen>
     <div class="estudio-col">
-      <div class="estudio" id="estudio">
-        <img class="base" id="gen-base" src="${BASES[gen.color]}" alt="Remera ${COLOR_TXT[gen.color].toLowerCase()}">
-        <div class="zona" id="gen-zona" ${gen.zona ? '' : 'hidden'}><span>Área de impresión</span></div>
-        <div class="capa" id="gen-capa" ${gen.src ? '' : 'hidden'}><img id="gen-img" src="${gen.src || ''}" alt="Tu diseño"></div>
-        <div class="estudio-vacio" id="gen-vacio" ${gen.src ? 'hidden' : ''}><span>Subí tu diseño para verlo acá</span></div>
+      <div class="seg" role="group" aria-label="Vista de la remera">
+        ${[['frente', 'Frente'], ['dorso', 'Dorso'], ['ambos', 'Frente y dorso']].map(([k, t]) => `<button type="button" data-gvista="${k}" aria-pressed="${gen.vista === k}">${t}</button>`).join('')}
       </div>
-      <div class="lectura">
-        <span class="medida" id="gen-medida">Sin diseño</span>
-        <span class="calidad" id="gen-calidad" hidden></span>
-      </div>
-      <p class="ayuda">Arrastrá el diseño para moverlo. Con dos dedos lo agrandás o achicás.</p>
+      <canvas id="gen-c" class="g-lienzo" width="${GEN_S}" height="${GEN_S}" aria-label="Vista previa de tu remera"></canvas>
+      <div class="lectura"><span class="medida" id="gen-medida">${gen.listo ? '' : 'Cargando la remera…'}</span></div>
+      <p class="ayuda" id="gen-info">Arrastrá la estampa para moverla.</p>
     </div>
     <div class="controles">
       <div class="paso">
-        <p class="paso-titulo"><b>1</b>Subí tu imagen</p>
+        <p class="paso-titulo"><b>1</b>Tu diseño</p>
+        <div class="seg dos" role="group" aria-label="Lado que estás editando">
+          <button type="button" data-glado="frente" aria-pressed="${lado === 'frente'}">Frente</button>
+          <button type="button" data-glado="dorso" aria-pressed="${lado === 'dorso'}">Dorso</button>
+        </div>
         <label class="subir" id="gen-subir">
           <input type="file" id="gen-archivo" accept="image/png,image/jpeg,image/webp">
-          <strong>${gen.src ? 'Cambiar imagen' : 'Elegir imagen'}</strong>
-          <small>PNG con fondo transparente o JPG · hasta 20 MB</small>
+          <strong id="gen-subir-txt">Elegir imagen</strong>
+          <small>PNG, JPG o WEBP. También podés arrastrarla acá o pegarla.</small>
         </label>
+        <div class="g-fila"><p class="ayuda" id="gen-nombre"></p><button type="button" class="g-chip" id="gen-quitar">Quitar diseño</button></div>
       </div>
       <div class="paso">
-        <p class="paso-titulo"><b>2</b>Ajustá la estampa</p>
-        <div class="slider"><label for="gen-escala">Tamaño <output id="gen-escala-v">${gen.escala}%</output></label>
-          <input type="range" id="gen-escala" min="20" max="200" value="${gen.escala}"></div>
-        <div class="slider"><label for="gen-rot">Rotación <output id="gen-rot-v">${gen.rot}°</output></label>
-          <input type="range" id="gen-rot" min="-180" max="180" value="${gen.rot}"></div>
-        <div class="slider"><label for="gen-op">Opacidad <output id="gen-op-v">${gen.op}%</output></label>
-          <input type="range" id="gen-op" min="20" max="100" value="${gen.op}"></div>
-        <div class="seg" role="group" aria-label="Posición rápida">
-          ${[['izq', 'Izquierda'], ['centro', 'Centro'], ['der', 'Derecha']].map(([k, t]) => `<button type="button" data-gpos="${k}" aria-pressed="${gen.pos === k}">${t}</button>`).join('')}
+        <p class="paso-titulo"><b>2</b>Remera</p>
+        <div class="opt-label">Color <em id="gen-color-txt">${genColor(gen.color).n}</em></div>
+        <div class="g-swatches" role="group" aria-label="Color de remera">
+          ${GEN_COLORES.map(c => `<button type="button" data-gcolor="${c.id}" aria-pressed="${c.id === gen.color}" aria-label="${c.n}" title="${c.n}" style="--sw:${c.hex}"></button>`).join('')}
         </div>
+        <div class="slider"><label for="gen-ancho">Ancho de la estampa <output id="gen-ancho-v"></output></label>
+          <input type="range" id="gen-ancho" min="12" max="62" step="0.5"></div>
+        <div class="slider"><label for="gen-alto">Altura desde el cuello <output id="gen-alto-v"></output></label>
+          <input type="range" id="gen-alto" min="4" max="55" step="0.5"></div>
         <div class="acciones-sec">
-          <button type="button" id="gen-zona-btn" aria-pressed="${gen.zona}">Ver área de impresión</button>
-          <button type="button" id="gen-reset">Volver a centrar</button>
+          <button type="button" id="gen-centrar">Centrar</button>
+          <button type="button" id="gen-tela" aria-pressed="${gen.tela}">Textura de tela</button>
         </div>
       </div>
       <div class="paso">
-        <p class="paso-titulo"><b>3</b>Elegí la remera</p>
-        <div class="colores" role="group" aria-label="Color de remera">
-          ${['blanca', 'negra'].map(c => `<button type="button" class="color" data-gc="${c}" aria-pressed="${gen.color === c}"><span class="sw"></span>${COLOR_TXT[c]}</button>`).join('')}
+        <p class="paso-titulo"><b>3</b>Fondo de la imagen</p>
+        <div class="seg" role="group" aria-label="Tipo de fondo">
+          ${[['agua', 'Agua'], ['liso', 'Liso'], ['imagen', 'Imagen']].map(([k, t]) => `<button type="button" data-gfondo="${k}" aria-pressed="${gen.fondo === k}">${t}</button>`).join('')}
         </div>
+        <div class="g-fila" id="gen-op-agua"><button type="button" class="g-chip" id="gen-otra">Otra textura</button><span class="ayuda">Cada textura es distinta.</span></div>
+        <div class="g-fila" id="gen-op-liso" hidden><input type="color" id="gen-colorfondo" value="${gen.colorFondo}" aria-label="Color de fondo"><span class="ayuda">Elegí el color del fondo.</span></div>
+        <div id="gen-op-imagen" hidden>
+          <label class="subir"><input type="file" id="gen-archivofondo" accept="image/png,image/jpeg,image/webp"><strong>Subir fondo</strong><small>Se recorta al centro en cuadrado.</small></label>
+        </div>
+      </div>
+      <div class="paso">
+        <p class="paso-titulo"><b>4</b>Talle y cantidad</p>
         <div class="opt-label">Talle <em id="gen-talle-txt">${gen.talle || 'Elegí uno'}</em></div>
         <div class="talles" role="group" aria-label="Talle">${TALLES.map(t => `<button type="button" class="talle" data-gtalle="${t}" aria-pressed="${gen.talle === t}">${t}</button>`).join('')}</div>
-        <div class="opt-label">Cantidad</div>
         <div class="qty"><button type="button" data-gqty="-1" aria-label="Menos">−</button><output id="gen-cant">${gen.cant}</output><button type="button" data-gqty="1" aria-label="Más">+</button></div>
       </div>
       <div class="paso">
-        <p class="paso-titulo"><b>4</b>Consultanos</p>
-        <p class="ayuda">Descargá el mockup y mandanos por WhatsApp el mockup y el archivo original. Para estampar en buena calidad necesitamos la imagen a 300 ppp.</p>
+        <p class="paso-titulo"><b>5</b>Pedila</p>
+        <p class="ayuda">Agregala al carrito y mandá el pedido por WhatsApp. Ahí pasanos la imagen que descargaste y el archivo original de tu diseño: para estampar en buena calidad lo necesitamos a 300 ppp.</p>
       </div>
     </div>
   </div>
@@ -3075,203 +3237,134 @@ function vDiseno() {
   </div>`;
 }
 
-function genMedidas() {
-  if (!gen.img) return null;
-  const ar = gen.w / gen.h;
-  let fw = ZONA.w, fh = ZONA.w / ar;
-  if (fh > ZONA.h) { fh = ZONA.h; fw = fh * ar; }
-  const k = gen.escala / 100;
-  return { fw: fw * k, fh: fh * k };
-}
-
-function genPintar() {
-  const capa = $('#gen-capa'); if (!capa) return;
-  const m = genMedidas();
-  if (m) {
-    capa.style.left = (gen.x * 100) + '%';
-    capa.style.top = (gen.y * 100) + '%';
-    capa.style.width = (m.fw * 100) + '%';
-    capa.style.opacity = gen.op / 100;
-    capa.style.transform = `translate(-50%, -50%) rotate(${gen.rot}deg)`;
-    const anchoCm = m.fw * ANCHO_FOTO_CM, altoCm = m.fh * ANCHO_FOTO_CM;
-    const ppp = Math.round(gen.w / (anchoCm / 2.54));
-    $('#gen-medida').textContent = `≈ ${Math.round(anchoCm)} × ${Math.round(altoCm)} cm (talle L) · ${ppp} ppp`;
-    const cal = $('#gen-calidad');
-    cal.hidden = false;
-    cal.className = 'calidad ' + (ppp >= 200 ? 'buena' : ppp >= 120 ? 'media' : 'baja');
-    cal.textContent = ppp >= 200 ? 'Buena resolución' : ppp >= 120 ? 'Resolución justa' : 'Resolución baja';
-  }
-  $('#gen-escala-v').textContent = gen.escala + '%';
-  $('#gen-rot-v').textContent = gen.rot + '°';
-  $('#gen-op-v').textContent = gen.op + '%';
-  genResumen();
-}
-
-function textoDiseno() {
-  const m = genMedidas();
-  return conRegalo([
-    '¡Hola Diseridú! Quiero estampar un diseño propio.',
-    `• Remera: ${COLOR_TXT[gen.color]}`,
-    `• Talle: ${gen.talle || 'a definir'}`,
-    `• Cantidad: ${gen.cant}`,
-    `• Tamaño aprox.: ${m ? Math.round(m.fw * ANCHO_FOTO_CM) + ' × ' + Math.round(m.fh * ANCHO_FOTO_CM) + ' cm' : 'a definir'}`,
-    '',
-    'Les paso por acá el mockup y el archivo del diseño.'
-  ].join('\n'), true);
-}
-
 function genResumen() {
   const r = $('#gen-resumen'); if (!r) return;
-  r.innerHTML = `Tu diseño<small>${[COLOR_TXT[gen.color], gen.talle ? 'Talle ' + gen.talle : 'Sin talle', gen.cant + (gen.cant === 1 ? ' unidad' : ' unidades')].join(' · ')}</small>`;
-  const gc = $('#gen-consultar'); if (gc) gc.href = linkWpp(textoDiseno());
+  r.innerHTML = `Tu diseño<small>${[genColor(gen.color).n, gen.talle ? 'Talle ' + gen.talle : 'Sin talle', gen.cant + (gen.cant === 1 ? ' unidad' : ' unidades')].join(' · ')}</small>`;
 }
+function avisoGen(msg) { const m = $('#gen-medida'); if (m) m.textContent = msg; }
 
-function genCargar(file) {
-  if (!file) return;
-  if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) { avisoGen('Ese formato no sirve. Usá PNG, JPG o WEBP.'); return; }
-  if (file.size > 20 * 1024 * 1024) { avisoGen('La imagen pesa más de 20 MB.'); return; }
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const img = new Image();
-    img.onload = () => {
-      Object.assign(gen, { src: ev.target.result, img, w: img.naturalWidth, h: img.naturalHeight, escala: 100, rot: 0, op: 100, x: .5, y: .465, pos: 'centro' });
-      vista.innerHTML = vDiseno();
-      genInit();
-    };
-    img.onerror = () => avisoGen('No se pudo abrir la imagen.');
-    img.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function avisoGen(msg) {
-  const m = $('#gen-medida'); if (m) m.textContent = msg;
+async function genLeer(f, destino) {
+  if (!f || !/^image\/(png|jpe?g|webp)$/.test(f.type)) { avisoGen('Ese archivo no es una imagen PNG, JPG o WEBP.'); return; }
+  if (f.size > 25 * 1024 * 1024) { avisoGen('La imagen pesa más de 25 MB.'); return; }
+  const url = URL.createObjectURL(f);
+  try {
+    const i = await cargarImg(url);
+    if (destino === 'fondo') gen.bgImg = i;
+    else {
+      const l = genL();
+      Object.assign(l, { diseno: i, ejemplo: false, nombre: f.name.replace(/\.[^.]+$/, ''), info: `${f.name} · ${i.width} × ${i.height} px` });
+      if (gen.vista !== 'ambos') gen.vista = gen.lado;
+    }
+    genSync(); genDibujar();
+  } catch (e) { avisoGen('No se pudo abrir la imagen. Probá con otro archivo.'); }
 }
 
 function genInit() {
-  const estudio = $('#estudio'), capa = $('#gen-capa'), subir = $('#gen-subir');
-  $('#gen-archivo').addEventListener('change', e => genCargar(e.target.files[0]));
+  const c = $('#gen-c'), subir = $('#gen-subir');
+  $('#gen-archivo').addEventListener('change', e => { genLeer(e.target.files[0], 'diseno'); e.target.value = ''; });
+  $('#gen-archivofondo').addEventListener('change', e => { genLeer(e.target.files[0], 'fondo'); e.target.value = ''; });
   ['dragenter', 'dragover'].forEach(ev => subir.addEventListener(ev, e => { e.preventDefault(); subir.classList.add('arrastrando'); }));
   ['dragleave', 'drop'].forEach(ev => subir.addEventListener(ev, e => { e.preventDefault(); subir.classList.remove('arrastrando'); }));
-  subir.addEventListener('drop', e => genCargar(e.dataTransfer.files[0]));
-  estudio.addEventListener('dragover', e => e.preventDefault());
-  estudio.addEventListener('drop', e => { e.preventDefault(); genCargar(e.dataTransfer.files[0]); });
-  [['gen-escala', 'escala'], ['gen-rot', 'rot'], ['gen-op', 'op']].forEach(([id, k]) =>
-    $('#' + id).addEventListener('input', e => { gen[k] = Number(e.target.value); genPintar(); }));
+  subir.addEventListener('drop', e => genLeer(e.dataTransfer.files[0], 'diseno'));
+  c.addEventListener('dragover', e => e.preventDefault());
+  c.addEventListener('drop', e => { e.preventDefault(); genLeer(e.dataTransfer.files[0], 'diseno'); });
+  $('#gen-ancho').addEventListener('input', e => { genL().ancho = +e.target.value; genDibujar(); });
+  $('#gen-alto').addEventListener('input', e => { genL().alto = +e.target.value; genDibujar(); });
+  $('#gen-colorfondo').addEventListener('input', e => { gen.colorFondo = e.target.value; genDibujar(); });
 
-  // arrastrar y pellizcar
-  const punteros = new Map();
-  let inicio = null, pinch = null;
-  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-  capa.addEventListener('pointerdown', e => {
-    if (punteros.size >= 2) return;
-    try { capa.setPointerCapture(e.pointerId); } catch (_) {}
-    punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (punteros.size === 1) inicio = { px: e.clientX, py: e.clientY, x: gen.x, y: gen.y };
-    else { const [a, b] = [...punteros.values()]; pinch = { d: dist(a, b), escala: gen.escala }; }
-    capa.classList.add('activa');
-    e.preventDefault();
+  // arrastrar la estampa sobre el lienzo
+  let arr = null;
+  const pt = e => { const b = c.getBoundingClientRect(); return { x: (e.clientX - b.left) * GEN_S / b.width, y: (e.clientY - b.top) * GEN_S / b.height }; };
+  c.addEventListener('pointerdown', e => {
+    if (!gen.listo) return;
+    const p = pt(e);
+    if (gen.vista === 'ambos') { const lado = p.x < GEN_S / 2 ? 'frente' : 'dorso'; if (lado !== gen.lado) { gen.lado = lado; genSync(); genDibujar(); } }
+    const l = genL(); if (!l.diseno) return;
+    arr = { x: p.x, y: p.y, dx: l.dx, alto: l.alto, s: genUbic(gen.lado).s };
+    c.setPointerCapture(e.pointerId); c.classList.add('drag');
   });
-  capa.addEventListener('pointermove', e => {
-    if (!punteros.has(e.pointerId)) return;
-    punteros.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    const r = estudio.getBoundingClientRect();
-    if (punteros.size === 1 && inicio) {
-      gen.x = Math.max(.05, Math.min(.95, inicio.x + (e.clientX - inicio.px) / r.width));
-      gen.y = Math.max(.05, Math.min(.95, inicio.y + (e.clientY - inicio.py) / r.height));
-      if (gen.pos) { gen.pos = null; document.querySelectorAll('[data-gpos]').forEach(b => b.setAttribute('aria-pressed', 'false')); }
-    } else if (punteros.size === 2 && pinch && pinch.d > 0) {
-      const [a, b] = [...punteros.values()];
-      gen.escala = Math.max(20, Math.min(200, Math.round(pinch.escala * dist(a, b) / pinch.d)));
-      $('#gen-escala').value = gen.escala;
-    }
-    genPintar();
-    e.preventDefault();
+  c.addEventListener('pointermove', e => {
+    if (!arr) return;
+    const p = pt(e), th = genTee(gen.lado).height, l = genL();
+    let dx = arr.dx + (p.x - arr.x) / arr.s; if (Math.abs(dx) < 8) dx = 0; l.dx = Math.max(-220, Math.min(220, dx));
+    l.alto = Math.round(Math.max(4, Math.min(55, arr.alto + (p.y - arr.y) / arr.s / th * 100)) * 2) / 2;
+    $('#gen-alto').value = l.alto; genDibujar();
   });
-  const fin = e => {
-    try { capa.releasePointerCapture(e.pointerId); } catch (_) {}
-    punteros.delete(e.pointerId);
-    if (punteros.size === 1) { const p = [...punteros.values()][0]; inicio = { px: p.x, py: p.y, x: gen.x, y: gen.y }; pinch = null; }
-    if (punteros.size === 0) { inicio = pinch = null; capa.classList.remove('activa'); }
-  };
-  capa.addEventListener('pointerup', fin);
-  capa.addEventListener('pointercancel', fin);
-  genPintar();
+  ['pointerup', 'pointercancel'].forEach(ev => c.addEventListener(ev, () => { arr = null; c.classList.remove('drag'); }));
+
+  genSync(); genDibujar();
+  if (!gen.listo) genAssets().then(() => { if ($('#gen-c')) { genSync(); genDibujar(); } })
+    .catch(() => avisoGen('No se pudo cargar la remera. Recargá la página.'));
 }
+// pegar una imagen con Ctrl+V mientras se está en el generador
+document.addEventListener('paste', e => {
+  if (!$('#gen-c')) return;
+  const it = [...(e.clipboardData?.items || [])].find(x => x.type.startsWith('image/'));
+  if (it) genLeer(it.getAsFile(), 'diseno');
+});
 
 function genClick(t) {
-  if (t.dataset.gc) {
-    gen.color = t.dataset.gc;
-    $('#gen-base').src = BASES[gen.color];
-    $('#gen-base').alt = 'Remera ' + COLOR_TXT[gen.color].toLowerCase();
-    document.querySelectorAll('[data-gc]').forEach(b => b.setAttribute('aria-pressed', b === t));
-    return genResumen();
-  }
-  if (t.dataset.gtalle) {
-    gen.talle = t.dataset.gtalle;
+  const d = t.dataset;
+  if (d.gvista) { gen.vista = d.gvista; if (gen.vista !== 'ambos') gen.lado = gen.vista; genSync(); return genDibujar(); }
+  if (d.glado) { gen.lado = d.glado; if (gen.vista !== 'ambos') gen.vista = gen.lado; genSync(); return genDibujar(); }
+  if (d.gcolor) { gen.color = d.gcolor; genSync(); return genDibujar(); }
+  if (d.gfondo) { gen.fondo = d.gfondo; genSync(); return genDibujar(); }
+  if (d.gtalle) {
+    gen.talle = d.gtalle;
     document.querySelectorAll('[data-gtalle]').forEach(b => b.setAttribute('aria-pressed', b === t));
     $('#gen-talle-txt').textContent = gen.talle;
     return genResumen();
   }
-  if (t.dataset.gqty) {
-    gen.cant = Math.max(1, Math.min(50, gen.cant + Number(t.dataset.gqty)));
+  if (d.gqty) {
+    gen.cant = Math.max(1, Math.min(50, gen.cant + Number(d.gqty)));
     $('#gen-cant').textContent = gen.cant;
     return genResumen();
   }
-  if (t.dataset.gpos) {
-    gen.pos = t.dataset.gpos;
-    gen.x = { izq: .4, centro: .5, der: .6 }[gen.pos];
-    gen.y = .465;
-    if (gen.pos !== 'centro' && gen.escala > 60) { gen.escala = 45; $('#gen-escala').value = 45; }
-    document.querySelectorAll('[data-gpos]').forEach(b => b.setAttribute('aria-pressed', b === t));
-    return genPintar();
-  }
-  if (t.id === 'gen-zona-btn') {
-    gen.zona = !gen.zona;
-    $('#gen-zona').hidden = !gen.zona;
-    return t.setAttribute('aria-pressed', gen.zona);
-  }
-  if (t.id === 'gen-reset') {
-    Object.assign(gen, { escala: 100, rot: 0, op: 100, x: .5, y: .465, pos: 'centro' });
-    ['escala', 'rot', 'op'].forEach(k => $('#gen-' + k).value = gen[k]);
-    document.querySelectorAll('[data-gpos]').forEach(b => b.setAttribute('aria-pressed', b.dataset.gpos === 'centro'));
-    return genPintar();
+  if (t.id === 'gen-otra') { gen.seed = Math.floor(Math.random() * 1e6); return genDibujar(); }
+  if (t.id === 'gen-centrar') { genL().dx = 0; return genDibujar(); }
+  if (t.id === 'gen-tela') { gen.tela = !gen.tela; t.setAttribute('aria-pressed', gen.tela); return genDibujar(); }
+  if (t.id === 'gen-quitar') {
+    Object.assign(genL(), { diseno: null, ejemplo: false, nombre: '',
+      info: gen.lado === 'frente' ? 'El frente está liso. Subí una imagen para estamparlo.' : 'El dorso está liso. Subí una imagen para estampar la espalda.' });
+    genSync(); return genDibujar();
   }
   if (t.id === 'gen-descargar') return genDescargar(t);
 }
 
-function cargarImg(src) {
-  return new Promise((ok, mal) => { const i = new Image(); i.onload = () => ok(i); i.onerror = mal; i.src = src; });
+const genPropio = () => ['frente', 'dorso'].some(k => gen.lados[k].diseno && !gen.lados[k].ejemplo);
+// detalle para el carrito y el mensaje de WhatsApp
+function genDetalle() {
+  const partes = [genColor(gen.color).n, 'talle ' + gen.talle];
+  ['frente', 'dorso'].forEach(k => {
+    const l = gen.lados[k]; if (!l.diseno || l.ejemplo) return;
+    const m = genCm(k); partes.push(`${k} ≈ ${m.w} × ${m.h} cm`);
+  });
+  return partes.join(', ');
+}
+// miniatura de la vista actual, para mostrar en el carrito
+function genMiniatura() {
+  try {
+    const c = $('#gen-c'), m = document.createElement('canvas'); m.width = m.height = 240;
+    m.getContext('2d').drawImage(c, 0, 0, 240, 240);
+    return m.toDataURL('image/jpeg', .8);
+  } catch (e) { return 'base-negra.jpg'; }
 }
 
 async function genDescargar(btn) {
-  if (!gen.img) { avisoGen('Primero subí tu imagen.'); $('#gen-subir').scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+  if (!gen.listo) return;
   btn.disabled = true;
   try {
-    const S = 1200, c = document.createElement('canvas');
-    c.width = c.height = S;
-    const ctx = c.getContext('2d');
-    ctx.drawImage(await cargarImg(BASES[gen.color]), 0, 0, S, S);
-    const m = genMedidas();
-    ctx.save();
-    ctx.globalAlpha = gen.op / 100;
-    ctx.translate(gen.x * S, gen.y * S);
-    ctx.rotate(gen.rot * Math.PI / 180);
-    ctx.drawImage(gen.img, -m.fw * S / 2, -m.fh * S / 2, m.fw * S, m.fh * S);
-    ctx.restore();
-    ctx.fillStyle = 'rgba(251, 248, 236, .9)';
-    ctx.font = '400 44px Anton, Oswald, Impact, sans-serif';
-    ctx.fillText('DISERIDÚ', 36, S - 40);
-    ctx.font = '600 18px Oswald, Arial, sans-serif';
-    ctx.fillText('@' + INSTAGRAM.toUpperCase(), S - 300, S - 44);
-    const blob = await new Promise(ok => c.toBlob(ok, 'image/png'));
+    const c = $('#gen-c');
+    const base = gen.lados.frente.nombre || gen.lados.dorso.nombre || 'remera';
+    const nombre = `diseridu-${slug(base).slice(0, 40)}-${gen.color}-${gen.vista === 'ambos' ? 'frente-y-dorso' : gen.vista}.jpg`;
+    const blob = await new Promise(ok => c.toBlob(ok, 'image/jpeg', .93));
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = 'diseridu-mockup.png';
+    a.href = url; a.download = nombre;
     document.body.appendChild(a); a.click(); a.remove();
-    verImagen(url, 'Tu mockup', 'Si no se descargó solo, mantené apretada la imagen (o clic derecho) y guardala. Después mandala por WhatsApp.');
+    verImagen(url, 'Tu remera', 'Si no se descargó sola, mantené apretada la imagen (o clic derecho) y guardala. Después mandala por WhatsApp.');
   } catch (err) {
-    avisoGen('No se pudo generar el mockup. Probá de nuevo.');
+    avisoGen('No se pudo generar la imagen. Probá de nuevo.');
   }
   btn.disabled = false;
 }
@@ -4932,12 +5025,16 @@ document.addEventListener('click', e => {
     return carroAgregar({ id: p.id, color: sel.color, talle: sel.talle, cant: sel.cant }, `"${p.nombre}" está en el carrito`);
   }
   if (t.id === 'gen-agregar') {
-    if (!gen.src) return toast('Primero subí tu diseño', true);
-    if (!gen.talle) return toast('Elegí un talle antes de agregar', true);
-    const m = genMedidas();
+    if (!gen.listo) return;
+    if (!genPropio()) return toast('Subí tu diseño: el que se ve es un ejemplo', true);
+    if (!gen.talle) {
+      $('#gen-talle-txt').textContent = 'Elegí uno';
+      document.querySelector('[data-gtalle]').closest('.talles').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return toast('Elegí un talle antes de agregar', true);
+    }
     return carroAgregar({
-      custom: 'remera', titulo: 'Remera con diseño propio', archivo: true, foto: BASES[gen.color], cant: gen.cant,
-      detalle: [COLOR_TXT[gen.color], 'talle ' + gen.talle, m ? `≈ ${Math.round(m.fw * ANCHO_FOTO_CM)} × ${Math.round(m.fh * ANCHO_FOTO_CM)} cm` : ''].filter(Boolean).join(', ')
+      custom: 'remera', titulo: 'Remera con diseño propio', archivo: true, foto: genMiniatura(), cant: gen.cant,
+      detalle: genDetalle()
     }, 'Tu remera está en el carrito');
   }
   if (t.id === 'e3d-agregar') {
