@@ -226,6 +226,15 @@ a { color: inherit; }
   padding: 7px 10px 6px; font: 600 13px/1.2 var(--label); letter-spacing: .08em; text-transform: uppercase;
 }
 .eyebrow.lim-eyebrow { color: var(--rosa); }
+.lim.oferta { background: #F2C14E; }
+.lim.oferta .lim-badge { background: var(--coral); color: #fff; }
+.card .tag.ofe { background: var(--coral); color: #fff; border-color: var(--tinta); }
+.lim-nota.ofe-nota { background: var(--coral); }
+.eyebrow.ofe-eyebrow { color: var(--coral); }
+.stock-mini { margin: -2px 0 0; font: 600 11px/1.2 var(--label); letter-spacing: .08em; text-transform: uppercase; color: var(--coral); }
+.lim.oferta .stock-mini { color: var(--tinta); }
+.talle:disabled { opacity: .35; text-decoration: line-through; cursor: not-allowed; }
+.stock-nota { margin: 8px 0 0; font-size: 13px; color: var(--tinta-suave); }
 .card h3 { margin: 0; font: 600 16px/1.15 var(--label); letter-spacing: .03em; text-transform: uppercase; overflow-wrap: anywhere; }
 .card .meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .precio { font: 500 14px/1 var(--texto); color: var(--tinta-suave); font-variant-numeric: tabular-nums; }
@@ -787,6 +796,28 @@ a { color: inherit; }
  "whatsapp": "5491125843143",
  "instagram": "diseridu.estampado",
  "productos": [
+  {
+   "id": "oferta-la-mona-y-el-potro",
+   "cat": "remeras",
+   "nombre": "La Mona y El potro",
+   "precio": 30000,
+   "tag": "",
+   "de": "la-mona-y-el-potro",
+   "oferta": "2026-11-07",
+   "stock": ["blanca:L", "negra:XL"],
+   "desc": "Últimas unidades ya estampadas, listas para entregar: una blanca talle L y una negra talle XL. A $30.000 hasta el sábado."
+  },
+  {
+   "id": "oferta-el-indio",
+   "cat": "remeras",
+   "nombre": "EL INDIO",
+   "precio": 30000,
+   "tag": "",
+   "de": "el-indio",
+   "oferta": "2026-11-07",
+   "stock": ["negra:L"],
+   "desc": "Última unidad ya estampada, lista para entregar: negra talle L. A $30.000 hasta el sábado."
+  },
   {
    "id": "como-conseguir-chicas",
    "cat": "remeras",
@@ -2681,6 +2712,29 @@ const fechaCorta = f => { const [y, m, d] = f.split('-').map(Number); return ['d
 const promoCorto = p => `Edición limitada${p.descuento ? ` con ${p.descuento}% off` : ''}`;
 const promoTxt = p => `Edición limitada${p.descuento ? ` · ${p.descuento}% off` : ''} · hasta el ${fechaCorta(p.limitada)}`;
 
+/* Oferta de stock: "oferta": "AAAA-MM-DD" (se ve hasta ese día inclusive), "precio" fijo y
+   "stock": ["blanca:L", "negra:XL"] = unidades ya estampadas (color:talle, una entrada por unidad).
+   "de": "id-de-otra-remera" toma fotos y color base de esa remera, así no se duplican las imágenes. */
+const esOferta = p => !!(p && p.oferta) && HOY <= p.oferta;
+const oculto = (o, k, v) => Object.defineProperty(o, k, { value: v, writable: true, enumerable: false, configurable: true });
+DATOS.productos.forEach(p => {
+  if (!p.de) return;
+  const src = DATOS.productos.find(x => x.id === p.de);
+  if (!src) return;
+  if (!p.fotos && src.fotos) oculto(p, 'fotos', { ...src.fotos });
+  if (!p.foto && src.foto) oculto(p, 'foto', src.foto);
+  if (!p.base && src.base) oculto(p, 'base', src.base);
+});
+const stockLista = p => (Array.isArray(p.stock) ? p.stock : []).map(x => { const [c, t] = String(x).split(':'); return { c: c.trim(), t: (t || '').trim().toUpperCase() }; }).filter(x => COLOR_TXT[x.c] && x.t);
+const stockColores = p => [...new Set(stockLista(p).map(x => x.c))];
+const stockTalles = (p, c) => [...new Set(stockLista(p).filter(x => x.c === c).map(x => x.t))];
+const stockCant = (p, c, t) => stockLista(p).filter(x => x.c === c && x.t === t).length;
+const conStock = p => p && p.cat === 'remeras' && stockLista(p).length > 0;
+DATOS.productos.forEach(p => { if (conStock(p) && !p.solo) { const cs = stockColores(p); if (cs.length === 1) oculto(p, 'solo', cs[0]); } });
+const stockTxt = p => stockLista(p).map(x => `${COLOR_TXT[x.c]} ${x.t}`).join(' · ');
+const ofertaTxt = p => `Oferta ${fmt(p.precio)} · hasta el ${fechaCorta(p.oferta)}`;
+if (!ES_EDITOR) PRODUCTOS = PRODUCTOS.filter(p => !p.oferta || esOferta(p));
+
 /* =========================================================
    Estado
    ========================================================= */
@@ -2699,8 +2753,9 @@ function textoConsulta(p, o = {}) {
     lineas.push(`• Talle: ${o.talle || 'a definir'}`);
   }
   if (esLimitada(p)) lineas.push(`• ${promoCorto(p)}`);
+  if (esOferta(p)) lineas.push(`• Oferta: ${fmt(p.precio)} c/u (unidad en stock)`);
   lineas.push(`• Cantidad: ${o.cant || 1}`);
-  lineas.push('', '¿Me pasan precio y cómo coordinamos el envío?');
+  lineas.push('', esOferta(p) ? '¿Cómo coordinamos el pago y el envío?' : '¿Me pasan precio y cómo coordinamos el envío?');
   return conRegalo(lineas.join('\n'));
 }
 const fotoDe = (p, color) => p.cat === 'remeras' ? p.fotos[color || p.base] : p.foto;
@@ -2717,6 +2772,7 @@ function vInicio() {
       <a class="handle" href="https://www.instagram.com/${INSTAGRAM}/" target="_blank" rel="noopener">@${INSTAGRAM}</a>
     </div>
   </section>
+  ${ofertaSeccion()}
   ${limSeccion()}
   <section class="wrap section">
     <p class="eyebrow">Elegí qué buscás</p>
@@ -2741,7 +2797,7 @@ function vInicio() {
   </section>
   <section class="wrap section">
     <p class="eyebrow">Recién estampadas</p>
-    <div class="grid">${PRODUCTOS.filter(p => p.cat === 'remeras' && !p.limitada).slice(0, 4).map(card).join('')}</div>
+    <div class="grid">${PRODUCTOS.filter(p => p.cat === 'remeras' && !p.limitada && !p.oferta).slice(0, 4).map(card).join('')}</div>
   </section>`;
 }
 
@@ -2763,6 +2819,26 @@ function limSeccion() {
   </section>`;
 }
 
+function ofertaSeccion() {
+  const l = PRODUCTOS.filter(esOferta);
+  if (!l.length) return '';
+  const hasta = l.map(p => p.oferta).sort().pop();
+  const precios = [...new Set(l.map(p => p.precio))];
+  const unidades = l.reduce((n, p) => n + (stockLista(p).length || 1), 0);
+  const badge = precios.length === 1 && precios[0] ? `<span class="lim-badge">$${precios[0] % 1000 ? precios[0].toLocaleString('es-AR') : precios[0] / 1000}<small>${precios[0] % 1000 ? 'c/u' : 'mil c/u'}</small></span>` : '';
+  return `
+  <section class="lim oferta" aria-label="Oferta">
+    <div class="wrap">
+      <div class="lim-head">
+        <div><p class="lim-kicker">Hasta el ${fechaCorta(hasta)}</p><h2>ÚLTIMAS REMERAS</h2></div>
+        ${badge}
+      </div>
+      <p class="lim-bajada">${unidades} ${unidades === 1 ? 'remera ya estampada' : 'remeras ya estampadas'}, listas para entregar${precios.length === 1 && precios[0] ? `, a ${fmt(precios[0])} cada una` : ''}. Una por talle: cuando se van, se van.</p>
+      <div class="fila">${l.map(card).join('')}</div>
+    </div>
+  </section>`;
+}
+
 function card(p) {
   const colores = p.cat !== 'remeras' ? ''
     : p.solo ? `<span class="dots" aria-label="Solo ${COLOR_TXT[p.solo].toLowerCase()}"><i class="dot ${p.solo}"></i></span>`
@@ -2770,12 +2846,12 @@ function card(p) {
   const color = p.cat === 'remeras' && filtroColor !== 'todas' ? filtroColor : null;
   return `<div class="card${p.cat === 'stickers' ? ' sticker' : ''}">
     <a class="card-link" href="#${p.id}" data-color="${color || ''}">
-      <div class="ph"><img loading="lazy" src="${fotoDe(p, color)}" alt="${esc(p.nombre)}">${esLimitada(p) ? `<span class="tag lim">Ed. limitada</span>` : p.tag ? `<span class="tag">${esc(p.tag)}</span>` : ''}</div>
-      <h3>${esc(p.nombre)}</h3>
+      <div class="ph"><img loading="lazy" src="${fotoDe(p, color)}" alt="${esc(p.nombre)}">${esOferta(p) ? `<span class="tag ofe">Oferta</span>` : esLimitada(p) ? `<span class="tag lim">Ed. limitada</span>` : p.tag ? `<span class="tag">${esc(p.tag)}</span>` : ''}</div>
+      <h3>${esc(p.nombre)}</h3>${conStock(p) ? `<p class="stock-mini">${stockTxt(p)}</p>` : ''}
     </a>
     <div class="meta"><span class="precio">${fmt(p.precio)}</span>${colores}</div>
     ${p.cat === 'remeras'
-      ? `<a class="mini-add talle-link" href="#${p.id}" data-pick-color="${color || ''}">Elegir talle →</a>`
+      ? `<a class="mini-add talle-link" href="#${p.id}" data-pick-color="${conStock(p) ? '' : color || ''}">${conStock(p) ? 'Ver talles →' : 'Elegir talle →'}</a>`
       : `<button type="button" class="mini-add" data-add="${p.id}">${ICON_CARRO}Agregar</button>`}
   </div>`;
 }
@@ -2783,7 +2859,8 @@ function card(p) {
 function vCategoria(cat) {
   const c = CATS[cat];
   const lista = PRODUCTOS.filter(p => p.cat === cat);
-  const lim = lista.filter(esLimitada), resto = lista.filter(p => !lim.includes(p));
+  const ofe = lista.filter(esOferta);
+  const lim = lista.filter(p => esLimitada(p) && !ofe.includes(p)), resto = lista.filter(p => !lim.includes(p) && !ofe.includes(p));
   const filtro = cat === 'remeras' ? `<div class="filtro" role="group" aria-label="Ver en color">
       ${['todas', 'blanca', 'negra'].map(f => `<button type="button" data-filtro="${f}" aria-pressed="${filtroColor === f}">${f === 'todas' ? 'Original' : COLOR_TXT[f]}</button>`).join('')}
     </div>` : '';
@@ -2796,6 +2873,9 @@ function vCategoria(cat) {
     <div class="toolbar"><span class="count">${lista.length} diseños</span>${filtro}</div>
     ${cat === 'remeras' ? `<a class="cta-3d" href="#tu-diseno"><div><strong>ESTAMPÁ TU DISEÑO</strong><small>Subí tu imagen, ubicala en la remera y mirá cómo queda antes de pedirla.</small></div><img src="norma-negra.jpg" alt=""></a>` : ''}
     ${cat === 'encendedores' ? `<a class="cta-3d" href="#encendedor-3d"><div><strong>ARMÁ TU FUEGO EN 3D</strong><small>Elegí un diseño o subí el tuyo, giralo y mirá cómo queda antes de pedirlo.</small></div><img src="fuego-sol.jpg" alt=""></a>` : ''}
+    ${ofe.length ? `<p class="eyebrow ofe-eyebrow">Últimas unidades · ${ofertaTxt(ofe[0])}</p>
+    <div class="grid">${ofe.map(card).join('')}</div>
+    ${lim.length ? '' : `<p class="eyebrow">${cat === 'remeras' ? 'Todas las remeras' : 'Todos los diseños'}</p>`}` : ''}
     ${lim.length ? `<p class="eyebrow lim-eyebrow">${promoTxt(lim[0])}</p>
     <div class="grid">${lim.map(card).join('')}</div>
     <p class="eyebrow">${cat === 'remeras' ? 'Todas las remeras' : 'Todos los diseños'}</p>` : ''}
@@ -2805,10 +2885,13 @@ function vCategoria(cat) {
 
 function vProducto(p, colorInicial) {
   const remera = p.cat === 'remeras';
-  sel = { id: p.id, color: remera ? (p.solo || colorInicial || p.base) : null, talle: null, cant: 1 };
-  const relacionados = PRODUCTOS.filter(x => x.cat === p.cat && x.id !== p.id).slice(0, 4);
+  const stk = conStock(p);
+  const color0 = stk ? (stockColores(p).includes(colorInicial) ? colorInicial : stockColores(p).includes(p.base) ? p.base : stockColores(p)[0]) : (p.solo || colorInicial || p.base);
+  sel = { id: p.id, color: remera ? color0 : null, talle: null, cant: 1 };
+  if (stk) { const ts = stockTalles(p, sel.color); if (ts.length === 1) sel.talle = ts[0]; }
+  const relacionados = PRODUCTOS.filter(x => x.cat === p.cat && x.id !== p.id && x.id !== p.de && x.de !== p.id).slice(0, 4);
   const specs = remera
-    ? [['Estampa', 'Vinilo textil impreso'], ['Colores', p.solo ? 'Solo ' + COLOR_TXT[p.solo].toLowerCase() : 'Blanca o negra'], ['Talles', TALLES.join(' · ')], ['Cuidados', 'Lavar del revés con agua fría. No planchar sobre la estampa ni usar secarropas.']]
+    ? [['Estampa', 'Vinilo textil impreso'], ['Colores', p.solo ? 'Solo ' + COLOR_TXT[p.solo].toLowerCase() : 'Blanca o negra'], ['Talles', stk ? 'En stock: ' + stockTxt(p) : TALLES.join(' · ')], ['Cuidados', 'Lavar del revés con agua fría. No planchar sobre la estampa ni usar secarropas.']]
     : p.cat === 'totes'
       ? [['Bolsa', 'Tote negra con manijas largas'], ['Estampa', 'Vinilo textil impreso'], ['Cuidados', 'Lavar a mano del revés con agua fría. No planchar sobre la estampa.']]
       : p.cat === 'encendedores'
@@ -2823,22 +2906,23 @@ function vProducto(p, colorInicial) {
           <img id="main-img" src="${fotoDe(p, sel.color)}" alt="${esc(p.nombre)}${remera ? ' en remera ' + COLOR_TXT[sel.color].toLowerCase() : ''}">
           <span class="zoom-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4M11 8v6M8 11h6"/></svg>Ampliar</span>
         </button>
-        ${remera && !p.solo ? `<div class="thumbs" role="group" aria-label="Vistas">
+        ${remera && !p.solo && !(stk && stockColores(p).length < 2) ? `<div class="thumbs" role="group" aria-label="Vistas">
           ${['blanca', 'negra'].map(c => `<button type="button" data-thumb="${c}" aria-pressed="${sel.color === c}" aria-label="Ver en ${COLOR_TXT[c].toLowerCase()}"><img src="${p.fotos[c]}" alt=""></button>`).join('')}
         </div>` : ''}
       </div>
       <div class="info">
         <h1>${esc(p.nombre)}</h1>
         <div class="precio-big">${fmt(p.precio)}</div>
-        ${esLimitada(p) ? `<p class="lim-nota">${promoTxt(p)}</p>` : ''}
+        ${esOferta(p) ? `<p class="lim-nota ofe-nota">${ofertaTxt(p)}</p>` : esLimitada(p) ? `<p class="lim-nota">${promoTxt(p)}</p>` : ''}
         ${remera ? `
         <div class="opt">
           <div class="opt-label">Color <em id="color-txt">${COLOR_TXT[sel.color]}</em></div>
           <div class="colores" role="group" aria-label="Color de remera">${botonesColor(sel.color, p)}</div>
         </div>
         <div class="opt">
-          <div class="opt-label">Talle <em id="talle-txt">Elegí uno</em></div>
-          <div class="talles" role="group" aria-label="Talle">${TALLES.map(t => `<button type="button" class="talle" data-talle="${t}" aria-pressed="false">${t}</button>`).join('')}</div>
+          <div class="opt-label">Talle <em id="talle-txt">${sel.talle || 'Elegí uno'}</em></div>
+          <div class="talles" role="group" aria-label="Talle">${tallesHTML(p)}</div>
+          ${stk ? '<p class="stock-nota">Unidades ya estampadas: solo están los talles en stock.</p>' : ''}
         </div>` : ''}
         <div class="opt">
           <div class="opt-label">Cantidad</div>
@@ -2868,8 +2952,14 @@ function vProducto(p, colorInicial) {
   </div>`;
 }
 
+function tallesHTML(p) {
+  const hay = conStock(p) ? stockTalles(p, sel.color) : TALLES;
+  return TALLES.map(t => { const ok = hay.includes(t); return `<button type="button" class="talle" data-talle="${t}" aria-pressed="${sel.talle === t}"${ok ? '' : ' disabled aria-label="' + t + ', sin stock"'}>${t}</button>`; }).join('');
+}
+const cantMax = p => conStock(p) ? Math.max(1, stockCant(p, sel.color, sel.talle) || 1) : 50;
+
 function botonesColor(actual, p) {
-  return (p && p.solo ? [p.solo] : ['blanca', 'negra']).map(c => `<button type="button" class="color" data-c="${c}" aria-pressed="${actual === c}"><span class="sw"></span>${COLOR_TXT[c]}</button>`).join('');
+  return (p && conStock(p) ? stockColores(p) : p && p.solo ? [p.solo] : ['blanca', 'negra']).map(c => `<button type="button" class="color" data-c="${c}" aria-pressed="${actual === c}"><span class="sw"></span>${COLOR_TXT[c]}</button>`).join('');
 }
 
 function resumen() {
@@ -2945,6 +3035,13 @@ function setColor(c) {
   document.querySelectorAll('.colores .color, .lb-colores .color').forEach(b => b.setAttribute('aria-pressed', b.dataset.c === c));
   document.querySelectorAll('[data-thumb]').forEach(b => b.setAttribute('aria-pressed', b.dataset.thumb === c));
   $('#color-txt').textContent = COLOR_TXT[c];
+  if (conStock(p)) {
+    const ts = stockTalles(p, c);
+    sel.talle = ts.length === 1 ? ts[0] : (ts.includes(sel.talle) ? sel.talle : null);
+    sel.cant = 1; if ($('#cant')) $('#cant').textContent = 1;
+    const box = $('.talles'); if (box) { box.innerHTML = tallesHTML(p); box.classList.remove('falta'); }
+    $('#talle-txt').textContent = sel.talle || 'Elegí uno'; $('#talle-txt').classList.remove('falta');
+  }
   if (!$('#lightbox').hidden) $('#lb-img').src = p.fotos[c];
   resumen();
 }
@@ -2964,6 +3061,7 @@ document.addEventListener('click', e => {
   if (t.matches('.color')) return setColor(t.dataset.c);
   if (t.dataset.thumb) return setColor(t.dataset.thumb);
   if (t.matches('.talle')) {
+    if (t.disabled) return;
     sel.talle = t.dataset.talle;
     document.querySelectorAll('.talle').forEach(b => b.setAttribute('aria-pressed', b === t));
     $('#talle-txt').textContent = t.dataset.talle;
@@ -2971,7 +3069,10 @@ document.addEventListener('click', e => {
     return resumen();
   }
   if (t.dataset.qty) {
-    sel.cant = Math.max(1, Math.min(50, sel.cant + Number(t.dataset.qty)));
+    const pq = PRODUCTOS.find(x => x.id === sel.id);
+    const max = cantMax(pq);
+    if (sel.cant + Number(t.dataset.qty) > max && conStock(pq)) toast(max === 1 ? 'Queda una sola en ese talle' : `Quedan ${max} en ese talle`, true);
+    sel.cant = Math.max(1, Math.min(max, sel.cant + Number(t.dataset.qty)));
     $('#cant').textContent = sel.cant;
     return resumen();
   }
@@ -4909,7 +5010,10 @@ function carroBadge(pop) {
 function carroAgregar(item, nombre) {
   const key = item.custom ? 'c-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) : [item.id, item.color || '', item.talle || ''].join('|');
   const ya = CARRO.find(x => x.key === key);
-  if (ya) ya.cant = Math.min(99, ya.cant + item.cant); else CARRO.push({ ...item, key });
+  const pp = !item.custom && PRODUCTOS.find(x => x.id === item.id);
+  const tope = pp && conStock(pp) ? Math.max(1, stockCant(pp, item.color, item.talle)) : 99;
+  if (ya && ya.cant >= tope) return toast(tope === 1 ? 'Esa unidad ya está en el carrito' : `Ya tenés las ${tope} en el carrito`, true, true);
+  if (ya) ya.cant = Math.min(tope, ya.cant + item.cant); else CARRO.push({ ...item, cant: Math.min(tope, item.cant), key });
   carroGuardar(); carroBadge(true);
   toast(nombre, false, true);
 }
@@ -4919,6 +5023,7 @@ function carroInfo(it) {
   const det = [TIPO[p.cat]];
   if (p.cat === 'remeras') det.push(COLOR_TXT[it.color], 'Talle ' + it.talle);
   if (esLimitada(p)) det.push('Ed. limitada' + (p.descuento ? ` −${p.descuento}%` : ''));
+  if (esOferta(p)) det.push('Oferta ' + fmt(p.precio));
   return { titulo: p.nombre, detalle: det.join(' · '), foto: fotoDe(p, it.color), sticker: p.cat === 'stickers', p };
 }
 function textoCarrito() {
@@ -4928,7 +5033,7 @@ function textoCarrito() {
     if (it.custom) linea = `${it.titulo}${it.detalle ? ' (' + it.detalle + ')' : ''}`;
     else {
       const p = PRODUCTOS.find(x => x.id === it.id);
-      linea = `${TIPO[p.cat]} "${p.nombre}"${p.cat === 'remeras' ? ` (${COLOR_TXT[it.color]}, talle ${it.talle})` : ''}${esLimitada(p) ? ' — ' + promoCorto(p).toLowerCase() : ''}`;
+      linea = `${TIPO[p.cat]} "${p.nombre}"${p.cat === 'remeras' ? ` (${COLOR_TXT[it.color]}, talle ${it.talle})` : ''}${esLimitada(p) ? ' — ' + promoCorto(p).toLowerCase() : ''}${esOferta(p) ? ` — oferta ${fmt(p.precio)} c/u, en stock` : ''}`;
     }
     l.push(`${i + 1}. ${linea} × ${it.cant}`);
   });
@@ -5048,7 +5153,10 @@ document.addEventListener('click', e => {
   }
   if (t.dataset.kq) {
     const it = CARRO.find(x => x.key === t.dataset.kq);
-    it.cant = Math.max(1, Math.min(99, it.cant + Number(t.dataset.d)));
+    const pk = !it.custom && PRODUCTOS.find(x => x.id === it.id);
+    const tope = pk && conStock(pk) ? Math.max(1, stockCant(pk, it.color, it.talle)) : 99;
+    if (it.cant + Number(t.dataset.d) > tope) toast(tope === 1 ? 'Queda una sola en ese talle' : `Quedan ${tope} en ese talle`, true);
+    it.cant = Math.max(1, Math.min(tope, it.cant + Number(t.dataset.d)));
     carroGuardar(); return carroPintar();
   }
   if (t.dataset.kx) {
